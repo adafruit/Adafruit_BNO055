@@ -95,12 +95,12 @@ void setup(void)
 void loop(void) 
 {
   // Possible vector values can be:
-  // - VECTOR_ACCELEROMETER
-  // - VECTOR_MAGNETOMETER
-  // - VECTOR_GYROSCOPE
-  // - VECTOR_EULER
-  // - VECTOR_LINEARACCEL
-  // - VECTOR_GRAVITY
+  // - VECTOR_ACCELEROMETER - m/s^2
+  // - VECTOR_MAGNETOMETER  - uT
+  // - VECTOR_GYROSCOPE     - rad/s
+  // - VECTOR_EULER         - degrees
+  // - VECTOR_LINEARACCEL   - m/s^2
+  // - VECTOR_GRAVITY       - m/s^2
   imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
   Serial.print("X: ");
   Serial.println((int)euler.x(), DEC);
@@ -110,6 +110,7 @@ void loop(void)
   Serial.println((int)euler.z(), DEC);
   Serial.println("");
 
+  /*
   imu::Quaternion quat = bno.getQuat();
   Serial.print("qW: ");
   Serial.println((int)quat.w(), DEC);
@@ -120,6 +121,7 @@ void loop(void)
   Serial.print("qZ: ");
   Serial.println((int)quat.z(), DEC);
   Serial.println("");
+  /*
   
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }
