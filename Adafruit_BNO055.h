@@ -246,6 +246,7 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
     void  displayRevInfo      ( void );
     void  getSystemStatus     ( adafruit_bno055_system_status_t* );
     void  displaySystemStatus ( void );
+    void  printDouble         ( double val, unsigned int precision );
     
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
     imu::Quaternion getQuat   ( void );

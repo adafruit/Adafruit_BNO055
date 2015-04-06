@@ -78,12 +78,12 @@ void setup(void)
   displaySensorDetails();
   
   /* Display system info (optional) */
-  bno.displaySystemStatus();
-  Serial.println("");
+  // bno.displaySystemStatus();
+  // Serial.println("");
   
   /* Display chip revision details (optional) */
-  bno.displayRevInfo();
-  Serial.println("");
+  // bno.displayRevInfo();
+  // Serial.println("");
 }
 
 /**************************************************************************/
@@ -94,34 +94,18 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {
-  // Possible vector values can be:
-  // - VECTOR_ACCELEROMETER - m/s^2
-  // - VECTOR_MAGNETOMETER  - uT
-  // - VECTOR_GYROSCOPE     - rad/s
-  // - VECTOR_EULER         - degrees
-  // - VECTOR_LINEARACCEL   - m/s^2
-  // - VECTOR_GRAVITY       - m/s^2
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  /* Get a new sensor event */ 
+  sensors_event_t event; 
+  bno.getEvent(&event);
+  
+  /* Display the floating point data */
   Serial.print("X: ");
-  Serial.println((int)euler.x(), DEC);
+  bno.printDouble(event.orientation.x, 1000);
   Serial.print("Y: ");
-  Serial.println((int)euler.y(), DEC);
+  bno.printDouble(event.orientation.y, 1000);
   Serial.print("Z: ");
-  Serial.println((int)euler.z(), DEC);
+  bno.printDouble(event.orientation.z, 1000);
   Serial.println("");
-
-  /*
-  imu::Quaternion quat = bno.getQuat();
-  Serial.print("qW: ");
-  Serial.println((int)quat.w(), DEC);
-  Serial.print("qX: ");
-  Serial.println((int)quat.x(), DEC);
-  Serial.print("qY: ");
-  Serial.println((int)quat.y(), DEC);
-  Serial.print("qZ: ");
-  Serial.println((int)quat.z(), DEC);
-  Serial.println("");
-  /*
   
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }

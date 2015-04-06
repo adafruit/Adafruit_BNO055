@@ -306,6 +306,35 @@ imu::Quaternion Adafruit_BNO055::getQuat(void)
 }
 
 /**************************************************************************/
+/*
+    Prints a float or double with the specified number of decimal places.
+
+    'precision' should be 1 followed by a zero for every decimal place
+    desired, so '100' will produce two decimal places:
+
+    print_double(3.1415, 100); // Output = 3.14
+*/
+/**************************************************************************/
+void Adafruit_BNO055::printDouble(double val, unsigned int precision)
+{
+  /* Print the integer portion */
+  Serial.print (int(val));
+  Serial.print(".");
+  
+  /* Print the fraction portion */
+  unsigned int frac;
+  if(val >= 0)
+  {
+    frac = (val - int(val)) * precision;
+  }
+  else
+  {
+    frac = (int(val)- val ) * precision;
+  }
+  Serial.println(frac,DEC) ;
+}
+
+/**************************************************************************/
 /*!
     @brief  Provides the sensor_t data for this sensor
 */
@@ -334,20 +363,20 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor)
 /**************************************************************************/
 bool Adafruit_BNO055::getEvent(sensors_event_t *event)
 {
-  float orientation;
-
   /* Clear the event */
   memset(event, 0, sizeof(sensors_event_t));
 
   event->version   = sizeof(sensors_event_t);
   event->sensor_id = _sensorID;
   event->type      = SENSOR_TYPE_ORIENTATION;
-  event->timestamp = 0;
-  /* 
-  getPressure(&pressure_kPa);
-  event->pressure = pressure_kPa / 100.0F;
-  */
-  
+  event->timestamp = millis();
+
+  /* Get a Euler angle sample for orientation */
+  imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
+  event->orientation.x = euler.x();
+  event->orientation.y = euler.y();
+  event->orientation.z = euler.z();
+
   return true;
 }
 
