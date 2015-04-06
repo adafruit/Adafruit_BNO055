@@ -79,10 +79,6 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
                     (0 << 0);  /* Accelerometer = m/s^2 */
   write8(BNO055_UNIT_SEL_ADDR, unitsel);
 
-  /* Orientation = Android (0 << )*/
-  /* Temperature = Celsisu (0 << 4)
-  uint8_t unitsel = 
-
   /* Set the requested operating mode (see section 3.3) */
   write8(BNO055_OPR_MODE_ADDR, mode);
   delay(20);
