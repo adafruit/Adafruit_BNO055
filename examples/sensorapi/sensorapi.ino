@@ -94,14 +94,31 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {
-  imu::Vector<3> euler = bno.getEuler();
-
+  // Possible vector values can be:
+  // - VECTOR_ACCELEROMETER
+  // - VECTOR_MAGNETOMETER
+  // - VECTOR_GYROSCOPE
+  // - VECTOR_EULER
+  // - VECTOR_LINEARACCEL
+  // - VECTOR_GRAVITY
+  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
   Serial.print("X: ");
   Serial.println((int)euler.x(), DEC);
   Serial.print("Y: ");
   Serial.println((int)euler.y(), DEC);
   Serial.print("Z: ");
   Serial.println((int)euler.z(), DEC);
+  Serial.println("");
+
+  imu::Quaternion quat = bno.getQuat();
+  Serial.print("qW: ");
+  Serial.println((int)quat.w(), DEC);
+  Serial.print("qX: ");
+  Serial.println((int)quat.x(), DEC);
+  Serial.print("qY: ");
+  Serial.println((int)quat.y(), DEC);
+  Serial.print("qZ: ");
+  Serial.println((int)quat.z(), DEC);
   Serial.println("");
   
   delay(BNO055_SAMPLERATE_DELAY_MS);

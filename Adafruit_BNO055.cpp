@@ -215,38 +215,10 @@ void Adafruit_BNO055::displayRevInfo(void)
 
 /**************************************************************************/
 /*!
-    @brief  Gets a new heading/roll/pitch sample in Euler angles
+    @brief  Gets a vector reading from the specified source
 */
 /**************************************************************************/
-imu::Vector<3> Adafruit_BNO055::getEuler(void)
-{
-  imu::Vector<3> hrp;
-  uint8_t buffer[6];
-  memset (buffer, 0, 6);
-  
-  int16_t h, r, p;
-  h = r = p = 0;
-  
-  /* Read HRP data (6 bytes) */
-  readLen(BNO055_EULER_H_LSB_ADDR, buffer, 6);
-  h = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
-  r = (((uint16_t)buffer[3]) << 8) | ((uint16_t)buffer[2]);
-  p = (((uint16_t)buffer[5]) << 8) | ((uint16_t)buffer[4]);
-  
-  /* Assign to Vector */
-  hrp[0] = (double)h;
-  hrp[1] = (double)r;
-  hrp[2] = (double)p;
-  
-  return hrp;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Gets a new accelerometer sample
-*/
-/**************************************************************************/
-imu::Vector<3> Adafruit_BNO055::getAccel(void)
+imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type)
 {
   imu::Vector<3> xyz;
   uint8_t buffer[6];
@@ -255,8 +227,8 @@ imu::Vector<3> Adafruit_BNO055::getAccel(void)
   int16_t x, y, z;
   x = y = z = 0;
   
-  /* Read accel data (6 bytes) */
-  readLen(BNO055_ACCEL_DATA_X_LSB_ADDR, buffer, 6);
+  /* Read vector data (6 bytes) */
+  readLen((adafruit_bno055_reg_t)vector_type, buffer, 6);
   x = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
   y = (((uint16_t)buffer[3]) << 8) | ((uint16_t)buffer[2]);
   z = (((uint16_t)buffer[5]) << 8) | ((uint16_t)buffer[4]);
@@ -267,6 +239,31 @@ imu::Vector<3> Adafruit_BNO055::getAccel(void)
   xyz[2] = (double)z;
   
   return xyz;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets a quaternion reading from the specified source
+*/
+/**************************************************************************/
+imu::Quaternion Adafruit_BNO055::getQuat(void)
+{
+  uint8_t buffer[8];
+  memset (buffer, 0, 8);
+  
+  int16_t x, y, z, w;
+  x = y = z = w = 0;
+  
+  /* Read quat data (8 bytes) */
+  readLen(BNO055_QUATERNION_DATA_W_LSB_ADDR, buffer, 8);
+  w = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
+  x = (((uint16_t)buffer[3]) << 8) | ((uint16_t)buffer[2]);
+  y = (((uint16_t)buffer[5]) << 8) | ((uint16_t)buffer[4]);
+  z = (((uint16_t)buffer[7]) << 8) | ((uint16_t)buffer[6]);
+
+  /* Assign to Quaternion */
+  imu::Quaternion quat((double)w, (double)x, (double)y, (double)z);
+  return quat;
 }
 
 /**************************************************************************/

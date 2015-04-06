@@ -227,6 +227,16 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
       uint8_t self_test_result;
       uint8_t system_error;
     } adafruit_bno055_system_status_t;
+    
+    typedef enum
+    {
+      VECTOR_ACCELEROMETER = BNO055_ACCEL_DATA_X_LSB_ADDR,
+      VECTOR_MAGNETOMETER  = BNO055_MAG_DATA_X_LSB_ADDR,
+      VECTOR_GYROSCOPE     = BNO055_GYRO_DATA_X_LSB_ADDR,
+      VECTOR_EULER         = BNO055_EULER_H_LSB_ADDR,
+      VECTOR_LINEARACCEL   = BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR,
+      VECTOR_GRAVITY       = BNO055_GRAVITY_DATA_X_LSB_ADDR
+    } adafruit_vector_type_t;
 
     Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A );
 
@@ -237,8 +247,8 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
     void  getSystemStatus     ( adafruit_bno055_system_status_t* );
     void  displaySystemStatus ( void );
     
-    imu::Vector<3> getEuler   ( void );
-    imu::Vector<3> getAccel   ( void );
+    imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
+    imu::Quaternion getQuat   ( void );
 
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
