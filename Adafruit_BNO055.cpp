@@ -223,6 +223,17 @@ void Adafruit_BNO055::displayRevInfo(void)
 
 /**************************************************************************/
 /*!
+    @brief  Gets teh temperature in degrees celsius
+*/
+/**************************************************************************/
+int8_t Adafruit_BNO055::getTemp(void)
+{
+  int8_t temp = (int8_t)(read8(BNO055_TEMP_ADDR));
+  return temp;
+}
+
+/**************************************************************************/
+/*!
     @brief  Gets a vector reading from the specified source
 */
 /**************************************************************************/

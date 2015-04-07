@@ -250,6 +250,7 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
     
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
     imu::Quaternion getQuat   ( void );
+    int8_t          getTemp   ( void );
 
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
