@@ -104,14 +104,17 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode)
     @brief  Gets the latest system status info
 */
 /**************************************************************************/
-void Adafruit_BNO055::getSystemStatus(adafruit_bno055_system_status_t * status)
+void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test_result, uint8_t *system_error)
 {
-  memset(status, 0, sizeof(adafruit_bno055_system_status_t));
-  
+  write8(BNO055_SYS_TRIGGER_ADDR, read8(BNO055_SYS_TRIGGER_ADDR) | 0x1);
+  delay(10);
   /* Read the system status register */
-  status->system_status    = read8(BNO055_SYS_STAT_ADDR);
-  status->self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
-  status->system_error     = read8(BNO055_SYS_ERR_ADDR);
+  if (system_status != 0)
+    *system_status    = read8(BNO055_SYS_STAT_ADDR);
+  if (self_test_result != 0)
+    *self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
+  if (system_error != 0)
+    *system_error     = read8(BNO055_SYS_ERR_ADDR);
 }
 
 /**************************************************************************/
@@ -121,8 +124,8 @@ void Adafruit_BNO055::getSystemStatus(adafruit_bno055_system_status_t * status)
 /**************************************************************************/
 void Adafruit_BNO055::displaySystemStatus(void)
 {
-  adafruit_bno055_system_status_t status;
-  getSystemStatus(&status);
+  uint8_t system_status, self_test_result, system_error;
+  getSystemStatus(&system_status, &self_test_result, &system_error);
   
   /* System Status (see section 4.3.58)
      ---------------------------------
@@ -135,7 +138,7 @@ void Adafruit_BNO055::displaySystemStatus(void)
      6 = System running without fusion algorithms */
   
   Serial.print("System Status:          0x");
-  Serial.println(status.system_status, HEX);
+  Serial.println(system_status, HEX);
 
   /* Self Test Results (see section )
      --------------------------------
@@ -149,7 +152,7 @@ void Adafruit_BNO055::displaySystemStatus(void)
      0x0F = all good! */
   
   Serial.print("Self Test Results:      0x");
-  Serial.println(status.self_test_result, HEX);
+  Serial.println(self_test_result, HEX);
 
   /* System Error (see section 4.3.59)
      ---------------------------------
@@ -166,7 +169,7 @@ void Adafruit_BNO055::displaySystemStatus(void)
      A = Sensor configuration error */
   
   Serial.print("System Error:           0x");
-  Serial.println(status.system_error, HEX);
+  Serial.println(system_error, HEX);
 }
 
 /**************************************************************************/

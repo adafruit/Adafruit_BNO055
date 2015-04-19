@@ -221,13 +221,6 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
       uint8_t  bl_rev;
     } adafruit_bno055_rev_info_t;
     
-    typedef struct
-    {
-      uint8_t system_status;      
-      uint8_t self_test_result;
-      uint8_t system_error;
-    } adafruit_bno055_system_status_t;
-    
     typedef enum
     {
       VECTOR_ACCELEROMETER = BNO055_ACCEL_DATA_X_LSB_ADDR,
@@ -244,7 +237,10 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
-    void  getSystemStatus     ( adafruit_bno055_system_status_t* );
+    //    void  getSystemStatus     ( adafruit_bno055_system_status_t* );
+    void  getSystemStatus     ( uint8_t *system_status, 
+				uint8_t *self_test_result, 
+				uint8_t *system_error);
     void  displaySystemStatus ( void );
     void  printDouble         ( double val, unsigned int precision );
     
