@@ -34,7 +34,7 @@
 #define BNO055_ADDRESS_B (0x29)
 #define BNO055_ID        (0xA0)
 
-class Adafruit_BNO055 /* : public Adafruit_Sensor */
+class Adafruit_BNO055 : public Adafruit_Sensor
 {
   public:
     typedef enum
