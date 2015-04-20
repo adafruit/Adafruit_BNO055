@@ -108,7 +108,6 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode)
 {
   _mode = mode;
-  //Serial.print("Mode: 0x"); Serial.println(mode, HEX);
   write8(BNO055_OPR_MODE_ADDR, _mode);
   delay(30);
 }
@@ -153,27 +152,6 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
 
   write8(BNO055_SYS_TRIGGER_ADDR, read8(BNO055_SYS_TRIGGER_ADDR) | 0x1);
   delay(1000);
-  /* Read the system status register */
-  if (system_status != 0)
-    *system_status    = read8(BNO055_SYS_STAT_ADDR);
-  if (self_test_result != 0)
-    *self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
-  if (system_error != 0)
-    *system_error     = read8(BNO055_SYS_ERR_ADDR);
-
-  setMode(backupmode);
-  delay(20);
-}
-
-/**************************************************************************/
-/*!
-    @brief  Displays system status info via Serial.print
-*/
-/**************************************************************************/
-void Adafruit_BNO055::displaySystemStatus(void)
-{
-  uint8_t system_status, self_test_result, system_error;
-  getSystemStatus(&system_status, &self_test_result, &system_error);
   
   /* System Status (see section 4.3.58)
      ---------------------------------
@@ -185,22 +163,22 @@ void Adafruit_BNO055::displaySystemStatus(void)
      5 = Sensor fusio algorithm running
      6 = System running without fusion algorithms */
   
-  Serial.print("System Status:          0x");
-  Serial.println(system_status, HEX);
-
+  if (system_status != 0)
+    *system_status    = read8(BNO055_SYS_STAT_ADDR);
+  
   /* Self Test Results (see section )
      --------------------------------
      1 = test passed, 0 = test failed
-    
+  
      Bit 0 = Accelerometer self test
      Bit 1 = Magnetometer self test
      Bit 2 = Gyroscope self test
      Bit 3 = MCU self test
-  
+
      0x0F = all good! */
   
-  Serial.print("Self Test Results:      0x");
-  Serial.println(self_test_result, HEX);
+  if (self_test_result != 0)
+    *self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
 
   /* System Error (see section 4.3.59)
      ---------------------------------
@@ -216,8 +194,11 @@ void Adafruit_BNO055::displaySystemStatus(void)
      9 = Fusion algorithm configuration error
      A = Sensor configuration error */
   
-  Serial.print("System Error:           0x");
-  Serial.println(system_error, HEX);
+  if (system_error != 0)
+    *system_error     = read8(BNO055_SYS_ERR_ADDR);
+
+  setMode(backupmode);
+  delay(20);
 }
 
 /**************************************************************************/
@@ -231,45 +212,21 @@ void Adafruit_BNO055::getRevInfo(adafruit_bno055_rev_info_t* info)
 
   memset(info, 0, sizeof(adafruit_bno055_rev_info_t));
 
+  /* Check the accelerometer revision */
   info->accel_rev = read8(BNO055_ACCEL_REV_ID_ADDR);
+
+  /* Check the magnetometer revision */
   info->mag_rev   = read8(BNO055_MAG_REV_ID_ADDR);
+
+  /* Check the gyroscope revision */
   info->gyro_rev  = read8(BNO055_GYRO_REV_ID_ADDR);
+
+  /* Check the SW revision */
   info->bl_rev    = read8(BNO055_BL_REV_ID_ADDR);
   
   a = read8(BNO055_SW_REV_ID_LSB_ADDR);
   b = read8(BNO055_SW_REV_ID_MSB_ADDR);
   info->sw_rev = (((uint16_t)b) << 8) | ((uint16_t)a);
-}
-
-/**************************************************************************/
-/*!
-    @brief  Displays the chip revision numbers via Serial.print
-*/
-/**************************************************************************/
-void Adafruit_BNO055::displayRevInfo(void)
-{
-  adafruit_bno055_rev_info_t info;
-  getRevInfo(&info);
-
-  /* Check the accelerometer revision */
-  Serial.print("Accelerometer Revision: 0x");
-  Serial.println(info.accel_rev, HEX);
-  
-  /* Check the magnetometer revision */
-  Serial.print("Magnetometer Revision:  0x");
-  Serial.println(info.mag_rev, HEX);
-  
-  /* Check the gyroscope revision */
-  Serial.print("Gyroscope Revision:     0x");
-  Serial.println(info.gyro_rev, HEX);
-  
-  /* Check the SW revision */
-  Serial.print("SW Revision:            0x");
-  Serial.println(info.sw_rev, HEX);
-  
-  /* Check the bootloader revision */
-  Serial.print("Bootloader Revision:    0x");
-  Serial.println(info.bl_rev, HEX);
 }
 
 /**************************************************************************/

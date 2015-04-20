@@ -239,8 +239,8 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
     void  getSystemStatus     ( uint8_t *system_status, 
-				uint8_t *self_test_result, 
-				uint8_t *system_error);
+                                uint8_t *self_test_result, 
+                                uint8_t *system_error);
     void  displaySystemStatus ( void );
     
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );

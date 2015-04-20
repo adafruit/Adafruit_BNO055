@@ -42,10 +42,6 @@ void setup(void)
   
   delay(1000);
     
-  /* Display chip revision details (optional) */
-  bno.displayRevInfo();
-  Serial.println("");
-  
   /* Display the current temperature */
   int8_t temp = bno.getTemp();
   Serial.print("Current Temperature: ");

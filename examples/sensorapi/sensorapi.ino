@@ -76,15 +76,7 @@ void setup(void)
     
   /* Display some basic information on this sensor */
   displaySensorDetails();
-  
-  /* Display system info (optional) */
-  // bno.displaySystemStatus();
-  // Serial.println("");
-  
-  /* Display chip revision details (optional) */
-  // bno.displayRevInfo();
-  // Serial.println("");
-  
+
   bno.setExtCrystalUse(true);
 }
 
