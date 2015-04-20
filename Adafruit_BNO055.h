@@ -237,12 +237,11 @@ class Adafruit_BNO055 /* : public Adafruit_Sensor */
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
-    //    void  getSystemStatus     ( adafruit_bno055_system_status_t* );
+    void  setExtCrystalUse    ( boolean usextal );
     void  getSystemStatus     ( uint8_t *system_status, 
 				uint8_t *self_test_result, 
 				uint8_t *system_error);
     void  displaySystemStatus ( void );
-    void  printDouble         ( double val, unsigned int precision );
     
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
     imu::Quaternion getQuat   ( void );

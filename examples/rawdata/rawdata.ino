@@ -18,7 +18,7 @@
 */
 
 /* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (500)
+#define BNO055_SAMPLERATE_DELAY_MS (100)
    
 Adafruit_BNO055 bno = Adafruit_BNO055();
 
@@ -52,6 +52,8 @@ void setup(void)
   Serial.print(temp);
   Serial.println(" C");
   Serial.println("");
+  
+  bno.setExtCrystalUse(true);
 }
 
 /**************************************************************************/
@@ -73,24 +75,24 @@ void loop(void)
   
   /* Display the floating point data */
   Serial.print("X: ");
-  bno.printDouble(euler.x(), 1000);
-  Serial.print("Y: ");
-  bno.printDouble(euler.y(), 1000);
-  Serial.print("Z: ");
-  bno.printDouble(euler.z(), 1000);
+  Serial.print(euler.x());
+  Serial.print(" Y: ");
+  Serial.print(euler.y());
+  Serial.print(" Z: ");
+  Serial.print(euler.z());
   Serial.println("");
 
   /*
   // Quaternion data
   imu::Quaternion quat = bno.getQuat();
   Serial.print("qW: ");
-  bno.printDouble(quat.w(), 1000);
-  Serial.print("qX: ");
-  bno.printDouble(quat.y(), 1000);
-  Serial.print("qY: ");
-  bno.printDouble(quat.x(), 1000);
-  Serial.print("qZ: ");
-  bno.printDouble(quat.z(), 1000);
+  Serial.print(quat.w(), 4);
+  Serial.print(" qX: ");
+  Serial.print(quat.y(), 4);
+  Serial.print(" qY: ");
+  Serial.print(quat.x(), 4);
+  Serial.print(" qZ: ");
+  Serial.print(quat.z(), 4);
   Serial.println("");
   */
   

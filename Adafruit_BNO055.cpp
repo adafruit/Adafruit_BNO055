@@ -61,15 +61,27 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if(id != BNO055_ID)
   {
-    return false;
+    delay(1000); // hold on for boot
+    if(id != BNO055_ID) {
+      return false;  // still not? ok bail
+    }
   }
 
   /* Switch to config mode (just in case since this is the default) */
   setMode(OPERATION_MODE_CONFIG);
+
+  /* Reset */
+  write8(BNO055_SYS_TRIGGER_ADDR, 0x20); //reset the sensor
+  while (read8(BNO055_CHIP_ID_ADDR) != BNO055_ID) //wait for boot
+    delay(10);
   
+  delay(50);
+ 
   /* Set to normal power mode */
   write8(BNO055_PWR_MODE_ADDR, POWER_MODE_NORMAL);
   delay(10);
+
+  write8(BNO055_PAGE_ID_ADDR, 0);
   
   /* Set the output units */
   uint8_t unitsel = (0 << 7) | /* Orientation = Android */
@@ -79,8 +91,10 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
                     (0 << 0);  /* Accelerometer = m/s^2 */
   write8(BNO055_UNIT_SEL_ADDR, unitsel);
 
+  write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
+  delay(10);
   /* Set the requested operating mode (see section 3.3) */
-  write8(BNO055_OPR_MODE_ADDR, mode);
+  setMode(mode);
   delay(20);
 
   return true;
@@ -94,10 +108,35 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode)
 {
   _mode = mode;
-  
+  //Serial.print("Mode: 0x"); Serial.println(mode, HEX);
   write8(BNO055_OPR_MODE_ADDR, _mode);
   delay(30);
 }
+
+/**************************************************************************/
+/*!
+    @brief  Use the external 32.768KHz crystal
+*/
+/**************************************************************************/
+void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
+{
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  /* Switch to config mode (just in case since this is the default) */
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  write8(BNO055_PAGE_ID_ADDR, 0);
+  if (usextal) {
+    write8(BNO055_SYS_TRIGGER_ADDR, 0x80);
+  } else {
+    write8(BNO055_SYS_TRIGGER_ADDR, 0x00);
+  }
+  delay(10);
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+}
+
 
 /**************************************************************************/
 /*!
@@ -106,8 +145,14 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode)
 /**************************************************************************/
 void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test_result, uint8_t *system_error)
 {
+  adafruit_bno055_opmode_t backupmode = _mode;
+
+  setMode(OPERATION_MODE_CONFIG);
+  delay(20);
+  write8(BNO055_PAGE_ID_ADDR, 0);
+
   write8(BNO055_SYS_TRIGGER_ADDR, read8(BNO055_SYS_TRIGGER_ADDR) | 0x1);
-  delay(10);
+  delay(1000);
   /* Read the system status register */
   if (system_status != 0)
     *system_status    = read8(BNO055_SYS_STAT_ADDR);
@@ -115,6 +160,9 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
     *self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
   if (system_error != 0)
     *system_error     = read8(BNO055_SYS_ERR_ADDR);
+
+  setMode(backupmode);
+  delay(20);
 }
 
 /**************************************************************************/
@@ -313,35 +361,6 @@ imu::Quaternion Adafruit_BNO055::getQuat(void)
   /* Assign to Quaternion */
   imu::Quaternion quat((double)w, (double)x, (double)y, (double)z);
   return quat;
-}
-
-/**************************************************************************/
-/*
-    Prints a float or double with the specified number of decimal places.
-
-    'precision' should be 1 followed by a zero for every decimal place
-    desired, so '100' will produce two decimal places:
-
-    print_double(3.1415, 100); // Output = 3.14
-*/
-/**************************************************************************/
-void Adafruit_BNO055::printDouble(double val, unsigned int precision)
-{
-  /* Print the integer portion */
-  Serial.print (int(val));
-  Serial.print(".");
-  
-  /* Print the fraction portion */
-  unsigned int frac;
-  if(val >= 0)
-  {
-    frac = (val - int(val)) * precision;
-  }
-  else
-  {
-    frac = (int(val)- val ) * precision;
-  }
-  Serial.println(frac,DEC) ;
 }
 
 /**************************************************************************/

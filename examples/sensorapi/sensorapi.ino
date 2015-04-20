@@ -19,7 +19,7 @@
    ===========
    Connect SCL to analog 5
    Connect SDA to analog 4
-   Connect VDD to 3.3V DC
+   Connect VDD to 3-5V DC
    Connect GROUND to common ground
     
    History
@@ -28,7 +28,7 @@
 */
 
 /* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (500)
+#define BNO055_SAMPLERATE_DELAY_MS (100)
    
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
@@ -84,6 +84,8 @@ void setup(void)
   /* Display chip revision details (optional) */
   // bno.displayRevInfo();
   // Serial.println("");
+  
+  bno.setExtCrystalUse(true);
 }
 
 /**************************************************************************/
@@ -100,11 +102,11 @@ void loop(void)
   
   /* Display the floating point data */
   Serial.print("X: ");
-  bno.printDouble(event.orientation.x, 1000);
-  Serial.print("Y: ");
-  bno.printDouble(event.orientation.y, 1000);
-  Serial.print("Z: ");
-  bno.printDouble(event.orientation.z, 1000);
+  Serial.print(event.orientation.x, 4);
+  Serial.print("\tY: ");
+  Serial.print(event.orientation.y, 4);
+  Serial.print("\tZ: ");
+  Serial.print(event.orientation.z, 4);
   Serial.println("");
   
   delay(BNO055_SAMPLERATE_DELAY_MS);
