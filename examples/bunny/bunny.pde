@@ -93,7 +93,7 @@ void loop(void)
   /* Board layout:
          +----------+
          |         *| RST   PITCH  ROLL  HEADING
-     ACR |*        *| SCL
+     ADR |*        *| SCL
      INT |*        *| SDA     ^            <-\
      PS1 |*        *| GND     |              |   
      PS0 |*        *| 3VO     Y    Z-->   X -/
