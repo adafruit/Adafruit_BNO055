@@ -82,8 +82,9 @@ void draw()
   translate(200, 300, 0);
   
   // Rotate shapes around the X/Y/Z axis (values in radians, 0..Pi*2)
-  rotateZ(radians(roll * -1.0F));
+  rotateZ(radians(roll));
   rotateX(radians(pitch));
+  rotateY(radians(yaw));
 
   pushMatrix();
   noStroke();

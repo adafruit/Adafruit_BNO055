@@ -71,10 +71,11 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   setMode(OPERATION_MODE_CONFIG);
 
   /* Reset */
-  write8(BNO055_SYS_TRIGGER_ADDR, 0x20); //reset the sensor
-  while (read8(BNO055_CHIP_ID_ADDR) != BNO055_ID) //wait for boot
+  write8(BNO055_SYS_TRIGGER_ADDR, 0x20);
+  while (read8(BNO055_CHIP_ID_ADDR) != BNO055_ID)
+  {
     delay(10);
-  
+  }
   delay(50);
  
   /* Set to normal power mode */
@@ -84,12 +85,14 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   write8(BNO055_PAGE_ID_ADDR, 0);
   
   /* Set the output units */
-  uint8_t unitsel = (0 << 7) | /* Orientation = Android */
-                    (0 << 4) | /* Temperature = Celsius */
-                    (0 << 2) | /* Euler = Degrees */
-                    (1 << 1) | /* Gyro = Rads */
-                    (0 << 0);  /* Accelerometer = m/s^2 */
+  /*
+  uint8_t unitsel = (0 << 7) | // Orientation = Android
+                    (0 << 4) | // Temperature = Celsius
+                    (0 << 2) | // Euler = Degrees
+                    (1 << 1) | // Gyro = Rads
+                    (0 << 0);  // Accelerometer = m/s^2
   write8(BNO055_UNIT_SEL_ADDR, unitsel);
+  */
 
   write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
   delay(10);
@@ -256,9 +259,10 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type)
   
   /* Read vector data (6 bytes) */
   readLen((adafruit_bno055_reg_t)vector_type, buffer, 6);
-  x = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
-  y = (((uint16_t)buffer[3]) << 8) | ((uint16_t)buffer[2]);
-  z = (((uint16_t)buffer[5]) << 8) | ((uint16_t)buffer[4]);
+  
+  x = ((int16_t)buffer[0]) | (((int16_t)buffer[1]) << 8);
+  y = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
+  z = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
 
   /* Convert the value to an appropriate range (section 3.6.4) */
   /* and assign the value to the Vector type */
