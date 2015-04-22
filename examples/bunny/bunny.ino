@@ -19,7 +19,7 @@
    ===========
    Connect SCL to analog 5
    Connect SDA to analog 4
-   Connect VDD to 3.3V DC
+   Connect VDD to 3.3-5V DC
    Connect GROUND to common ground
     
    History
@@ -28,7 +28,7 @@
 */
 
 /* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (50)
+#define BNO055_SAMPLERATE_DELAY_MS (100)
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
