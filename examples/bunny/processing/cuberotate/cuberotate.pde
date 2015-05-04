@@ -11,6 +11,11 @@ float yaw   = 0.0F;
 float temp  = 0.0F;
 float alt   = 0.0F;
 
+/* Adjust these offset to orient the object properly */
+float rollOffset  = 0.0F;
+float pitchOffset = 0.0F;
+float yawOffset   = 0.0F;
+
 OBJModel model;
 
 // Serial port state.
@@ -82,9 +87,9 @@ void draw()
   translate(200, 300, 0);
   
   // Rotate shapes around the X/Y/Z axis (values in radians, 0..Pi*2)
-  rotateZ(radians(roll));
-  rotateX(radians(pitch));
-  rotateY(radians(yaw));
+  rotateX(radians(pitch+pitchOffset));
+  rotateY(radians(2*PI-yaw+yawOffset));
+  rotateZ(radians(roll+rollOffset));
 
   pushMatrix();
   noStroke();
