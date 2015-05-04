@@ -1,7 +1,7 @@
 /*
     Inertial Measurement Unit Maths Library
     Copyright (C) 2013-2014  Samuel Cowen
-	www.camelsoftware.com
+    www.camelsoftware.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,17 +32,17 @@ namespace imu
 template <uint8_t N> class Matrix
 {
 public:
-	Matrix()
-	{
-		int r = sizeof(double)*N;
-        _cell = (double*)malloc(r*r);
+    Matrix()
+    {
+        int r = sizeof(double)*N;
+        _cell = &_cell_data[0];
         memset(_cell, 0, r*r);
-	}
+    }
 
     Matrix(const Matrix &v)
     {
         int r = sizeof(double)*N;
-        _cell = (double*)malloc(r*r);
+        _cell = &_cell_data[0];
         memset(_cell, 0, r*r);
         for (int x = 0; x < N; x++ )
         {
@@ -55,7 +55,6 @@ public:
 
     ~Matrix()
     {
-        free(_cell);
     }
 
     void operator = (Matrix m)
@@ -239,6 +238,7 @@ public:
 
 private:
     double* _cell;
+    double  _cell_data[N*N];
 };
 
 

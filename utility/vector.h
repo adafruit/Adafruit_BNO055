@@ -1,7 +1,7 @@
 /*
     Inertial Measurement Unit Maths Library
     Copyright (C) 2013-2014  Samuel Cowen
-	www.camelsoftware.com
+    www.camelsoftware.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,49 +32,49 @@ namespace imu
 template <uint8_t N> class Vector
 {
 public:
-	Vector()
-	{
-		p_vec = (double*)malloc(sizeof(double)*N+1);
+    Vector()
+    {
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
-	}
+    }
 
-	Vector(double a)
-	{
-		p_vec = (double*)malloc(sizeof(double)*N+1);
+    Vector(double a)
+    {
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
-		p_vec[0] = a;
-	}
+        p_vec[0] = a;
+    }
 
-	Vector(double a, double b)
-	{
-		p_vec = (double*)malloc(sizeof(double)*N+1);
+    Vector(double a, double b)
+    {
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
-		p_vec[0] = a;
-		p_vec[1] = b;
-	}
+        p_vec[0] = a;
+        p_vec[1] = b;
+    }
 
-	Vector(double a, double b, double c)
-	{
-		p_vec = (double*)malloc(sizeof(double)*N+1);
+    Vector(double a, double b, double c)
+    {
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
-		p_vec[0] = a;
-		p_vec[1] = b;
-		p_vec[2] = c;
-	}
+        p_vec[0] = a;
+        p_vec[1] = b;
+        p_vec[2] = c;
+    }
 
     Vector(double a, double b, double c, double d)
     {
-		p_vec = (double*)malloc(sizeof(double)*N+1);
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         p_vec[0] = a;
-		p_vec[1] = b;
-		p_vec[2] = c;
-		p_vec[3] = d;
+        p_vec[1] = b;
+        p_vec[2] = c;
+        p_vec[3] = d;
     }
 
     Vector(const Vector<N> &v)
     {
-        p_vec = (double*)malloc(sizeof(double)*N);
+        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         for (int x = 0; x < N; x++ )
             p_vec[x] = v.p_vec[x];
@@ -82,7 +82,6 @@ public:
 
     ~Vector()
     {
-        free(p_vec);
     }
 
     uint8_t n() { return N; }
@@ -157,7 +156,7 @@ public:
     {
         for (int x = 0; x < N; x++ )
             p_vec[x] = v.p_vec[x];
-		return *this;
+        return *this;
     }
 
     double& operator [](int n)
@@ -218,6 +217,7 @@ public:
 
 private:
     double* p_vec;
+    double  p_vec_data[N];
 };
 
 
