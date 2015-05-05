@@ -5,6 +5,13 @@ import processing.opengl.*;
 import saito.objloader.*;
 import g4p_controls.*;
 
+// Quaternion Values
+float w = 0.0F;
+float x = 0.0F;
+float y = 0.0F;
+float z = 0.0F;
+
+// Euler Values
 float roll  = 0.0F;
 float pitch = 0.0F;
 float yaw   = 0.0F;
@@ -99,6 +106,21 @@ void draw()
   //print("draw");
 }
 
+float magnitude()
+{
+  float res = (w*w) + (x*x) + (y*y) + (z*z);
+  return sqrt(res);
+}
+
+void normalize()
+{
+  float mag = magnitude();
+  w *= 1/mag;
+  x *= 1/mag;
+  y *= 1/mag;
+  z *= 1/mag;
+}
+
 void serialEvent(Serial p) 
 {
   String incoming = p.readString();
@@ -109,6 +131,23 @@ void serialEvent(Serial p)
   if ((incoming.length() > 8))
   {
     String[] list = split(incoming, " ");
+    if ( (list.length > 0) && (list[0].equals("Quaternions:")) ) 
+    {
+      w = float(list[1]);
+      x = float(list[2]);
+      y = float(list[3]);
+      z = float(list[4]);
+      normalize();
+      // Convert to Euler
+      double sqw = w*w;
+      double sqx = x*x;
+      double sqy = y*y;
+      double sqz = z*z;
+      roll = (atan2(2.0*(y*z+x*w),(float)(-sqx-sqy+sqz+sqw)));
+      pitch = (asin((float)(-2.0*(x*z-y*w)/(sqx+sqy+sqz+sqw))));
+      yaw = (atan2(2.0*(x*y+z*w),(float)(sqx-sqy-sqz+sqw)));
+      buffer = incoming;
+    }
     if ( (list.length > 0) && (list[0].equals("Orientation:")) ) 
     {
       roll  = float(list[3]); // Roll = Z

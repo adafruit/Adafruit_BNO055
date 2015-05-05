@@ -60,6 +60,20 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {
+  /* Board layout:
+  
+       +----------+
+       |o    |   o|          ______________         Z
+   VIN |*    |    |         / *           /|        ^  X
+   3Vo |*        *| PS0    /             / /        | /
+   GND |*  *--   *| PS1   /             / /         |/
+   SDA |*  ---   *| INT   -------------- /     Y <--+
+   SCL |*        *| ADR   --------------
+   RST |*         |           BNO055
+       |o        o|
+       +----------+
+  */
+  
   // Possible vector values can be:
   // - VECTOR_ACCELEROMETER - m/s^2
   // - VECTOR_MAGNETOMETER  - uT

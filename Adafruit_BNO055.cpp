@@ -93,8 +93,9 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
                     (0 << 0);  // Accelerometer = m/s^2
   write8(BNO055_UNIT_SEL_ADDR, unitsel);
   */
+  write8(BNO055_UNIT_SEL_ADDR, 0x00);
 
-  write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
+  write8(BNO055_SYS_TRIGGER_ADDR, 0x00);
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
   setMode(mode);
@@ -139,6 +140,27 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
   delay(20);
 }
 
+/**************************************************************************/
+/*!
+    @brief  Gets the system calibration status (0xFF = fully calibrated)
+*/
+/**************************************************************************/
+uint8_t Adafruit_BNO055::getCalStatus(void)
+{
+  uint8_t cal_status = 0;
+  
+  /* CALIB_STAT (see section 4.3.54)
+     -------------------------------
+     0..1 = MAG CALIB STATUS (3 = Calibrated, 0 = Not Calibrated)
+     2..3 = ACC CALIB STATUS (3 = Calibrated, 0 = Not Calibrated)
+     4..5 = GYR CALIB STATUS (3 = Calibrated, 0 = Not Calibrated)
+     6..7 = SYS CALIB STATUS (3 = Calibrated, 0 = Not Calibrated) */
+  
+  cal_status = read8(BNO055_CALIB_STAT_ADDR);
+
+  /* Calibration is complete when cal_status == 0xFF */
+  return cal_status;
+}
 
 /**************************************************************************/
 /*!
@@ -363,9 +385,9 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event)
 
   /* Get a Euler angle sample for orientation */
   imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
-  event->orientation.x = euler.x();
-  event->orientation.y = euler.y();
-  event->orientation.z = euler.z();
+  event->orientation.roll = euler.y();    // Roll    : -90°..90°
+  event->orientation.pitch = euler.z();   // Pitch   : -180°..180°
+  event->orientation.heading = euler.x(); // Heading : 0..360°
 
   return true;
 }

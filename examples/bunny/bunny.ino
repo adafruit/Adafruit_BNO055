@@ -40,6 +40,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 /**************************************************************************/
 void displaySensorDetails(void)
 {
+  /* Unified Sensor API */
   sensor_t sensor;
   bno.getSensor(&sensor);
   Serial.println("------------------------------------");
@@ -52,6 +53,26 @@ void displaySensorDetails(void)
   Serial.println("------------------------------------");
   Serial.println("");
   delay(500);
+}
+
+/**************************************************************************/
+/*
+    Displays some basic information on the BNO055 HW
+*/
+/**************************************************************************/
+void displayChipDetails(void)
+{
+  /* Chip Revision */
+  Adafruit_BNO055::adafruit_bno055_rev_info_t revInfo;
+  bno.getRevInfo(&revInfo);
+  Serial.println("------------------------------------");
+  Serial.print  ("Accel Rev:    0x"); Serial.println(revInfo.accel_rev, HEX);
+  Serial.print  ("Mag Rev:      0x"); Serial.println(revInfo.mag_rev, HEX);
+  Serial.print  ("Gyro Rev:     0x"); Serial.println(revInfo.gyro_rev, HEX);
+  Serial.print  ("SW Rev:       0x"); Serial.println(revInfo.sw_rev, HEX);
+  Serial.print  ("Boot Rev:     0x"); Serial.println(revInfo.bl_rev, HEX);
+  Serial.println("------------------------------------");
+  Serial.println("");
 }
 
 /**************************************************************************/
@@ -73,9 +94,18 @@ void setup(void)
   }
   
   delay(1000);
-    
+
+  /* Display the chip revision details */
+  displayChipDetails();
+  
   /* Display some basic information on this sensor */
   displaySensorDetails();
+  
+  /* Calibration info warning */
+  /* Move the device in a figure 8 motion to generate mag cal data */
+  Serial.println(F("* indicates calibrated data"));
+  Serial.println(F("! indicates uncalibrated data"));
+  Serial.println(F(""));
 }
 
 /**************************************************************************/
@@ -86,29 +116,52 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {
+  /* Board layout:
+  
+       +----------+
+       |o    |   o|          ______________         Z
+   VIN |*    |    |         / *           /|        ^  X
+   3Vo |*        *| PS0    /             / /        | /
+   GND |*  *--   *| PS1   /             / /         |/
+   SDA |*  ---   *| INT   -------------- /     Y <--+
+   SCL |*        *| ADR   --------------
+   RST |*         |           BNO055
+       |o        o|
+       +----------+
+
+   Roll:    Rotation around the Y axis (-90° <= roll <= 90°)
+            Positive values increasing when X moves towards Z
+   Pitch:   Rotation around the X axis (-180° <= pitch <= 180°C)
+            Positive values increasing when Z moves towards Y
+   Heading: Rotation around the Z axis (0° <= Heading < 360°)
+            North = 0°, East = 90°, South = 180°, West = 270°
+  */
+  
   /* Get a new sensor event */ 
   sensors_event_t event; 
   bno.getEvent(&event);
-  
-  /* Board layout:
-         +----------+
-         |         *| RST   PITCH  ROLL  HEADING
-     ADR |*        *| SCL
-     INT |*        *| SDA     ^            /->
-     PS1 |*        *| GND     |            |   
-     PS0 |*        *| 3VO     Y    Z-->    \-X
-         |         *| VIN 
-         +----------+
-  */
 
   /* The processing sketch expects data as roll, pitch, heading */
   Serial.print(F("Orientation: "));
-  Serial.print((float)event.orientation.x);
+  Serial.print((float)event.orientation.roll);
   Serial.print(F(" "));
-  Serial.print((float)event.orientation.y);
+  Serial.print((float)event.orientation.pitch);
   Serial.print(F(" "));
-  Serial.print((float)event.orientation.z);
-  Serial.println(F(""));
+  Serial.print((float)event.orientation.heading);
+  Serial.print(F(" "));
+
+  /* Make sure the magnetometer is fully calibrated (bits 4..5 = 11) */  
+  uint8_t calStatus = bno.getCalStatus();
+  if (calStatus && 0x30)
+  {
+    /* Data comes from calibrated sensor */
+    Serial.println(F("*"));
+  }
+  else
+  {
+    /* Sensor is not fully calibrated ... move in figure-8 motion */
+    Serial.println(F("!"));
+  }
 
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }

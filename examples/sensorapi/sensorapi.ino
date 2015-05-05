@@ -29,7 +29,7 @@
 
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (100)
-   
+
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 /**************************************************************************/
@@ -56,6 +56,26 @@ void displaySensorDetails(void)
 
 /**************************************************************************/
 /*
+    Displays some basic information on the BNO055 HW
+*/
+/**************************************************************************/
+void displayChipDetails(void)
+{
+  /* Chip Revision */
+  Adafruit_BNO055::adafruit_bno055_rev_info_t revInfo;
+  bno.getRevInfo(&revInfo);
+  Serial.println("------------------------------------");
+  Serial.print  ("Accel Rev:    0x"); Serial.println(revInfo.accel_rev, HEX);
+  Serial.print  ("Mag Rev:      0x"); Serial.println(revInfo.mag_rev, HEX);
+  Serial.print  ("Gyro Rev:     0x"); Serial.println(revInfo.gyro_rev, HEX);
+  Serial.print  ("SW Rev:       0x"); Serial.println(revInfo.sw_rev, HEX);
+  Serial.print  ("Boot Rev:     0x"); Serial.println(revInfo.bl_rev, HEX);
+  Serial.println("------------------------------------");
+  Serial.println("");
+}
+
+/**************************************************************************/
+/*
     Arduino setup function (automatically called at startup)
 */
 /**************************************************************************/
@@ -77,6 +97,15 @@ void setup(void)
   /* Display some basic information on this sensor */
   displaySensorDetails();
 
+  /* Display some basic information on this sensor */
+  displayChipDetails();
+  
+  /* Calibration info warning */
+  /* Move the device in a figure 8 motion to generate mag cal data */
+  Serial.println(F("* indicates calibrated data"));
+  Serial.println(F("! indicates uncalibrated data"));
+  Serial.println(F(""));
+
   bno.setExtCrystalUse(true);
 }
 
@@ -92,14 +121,47 @@ void loop(void)
   sensors_event_t event; 
   bno.getEvent(&event);
   
+  /* Board layout:
+       +----------+
+       |o    |   o|          ______________         Z
+   VIN |*    |    |         / *           /|        ^  X
+   3Vo |*        *| PS0    /             / /        | /
+   GND |*  *--   *| PS1   /             / /         |/
+   SDA |*  ---   *| INT   -------------- /     Y <--+
+   SCL |*        *| ADR   --------------
+   RST |*         |           BNO055
+       |o        o|
+       +----------+
+
+   Roll:    Rotation around the Y axis (-90° <= roll <= 90°)
+            Positive values increasing when X moves towards Z
+   Pitch:   Rotation around the X axis (-180° <= pitch <= 180°C)
+            Positive values increasing when Z moves towards Y
+   Heading: Rotation around the Z axis (0° <= Heading < 360°)
+            North = 0°, East = 90°, South = 180°, West = 270°
+  */
+    
   /* Display the floating point data */
-  Serial.print("X: ");
-  Serial.print(event.orientation.x, 4);
-  Serial.print("\tY: ");
-  Serial.print(event.orientation.y, 4);
-  Serial.print("\tZ: ");
-  Serial.print(event.orientation.z, 4);
-  Serial.println("");
+  Serial.print("Roll: ");
+  Serial.print(event.orientation.roll);
+  Serial.print("\tPitch: ");
+  Serial.print(event.orientation.pitch);
+  Serial.print("\tHeading: ");
+  Serial.print(event.orientation.heading);
+  Serial.print("");
+
+  /* Make sure the magnetometer is fully calibrated (bits 4..5 = 11) */  
+  uint8_t calStatus = bno.getCalStatus();
+  if (calStatus && 0x30)
+  {
+    /* Data comes from calibrated sensor */
+    Serial.println(F("\t*"));
+  }
+  else
+  {
+    /* Sensor is not fully calibrated ... move in figure-8 motion */
+    Serial.println(F("\t!"));
+  }
   
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }
