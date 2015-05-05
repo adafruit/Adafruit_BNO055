@@ -94,31 +94,16 @@ void draw()
   translate(200, 300, 0);
   
   // Rotate shapes around the X/Y/Z axis (values in radians, 0..Pi*2)
-  rotateX(radians(pitch+pitchOffset));
-  rotateY(radians(2*PI-yaw+yawOffset));
-  rotateZ(radians(roll+rollOffset));
+  rotateY(-radians(roll));
+  rotateZ(radians(pitch));
+  rotateX(-radians(yaw));
 
-  pushMatrix();
+  pushMatrix();  
   noStroke();
   model.draw();
   popMatrix();
   popMatrix();
   //print("draw");
-}
-
-float magnitude()
-{
-  float res = (w*w) + (x*x) + (y*y) + (z*z);
-  return sqrt(res);
-}
-
-void normalize()
-{
-  float mag = magnitude();
-  w *= 1/mag;
-  x *= 1/mag;
-  y *= 1/mag;
-  z *= 1/mag;
 }
 
 void serialEvent(Serial p) 
@@ -137,15 +122,14 @@ void serialEvent(Serial p)
       x = float(list[2]);
       y = float(list[3]);
       z = float(list[4]);
-      normalize();
       // Convert to Euler
       double sqw = w*w;
       double sqx = x*x;
       double sqy = y*y;
       double sqz = z*z;
-      roll = (atan2(2.0*(y*z+x*w),(float)(-sqx-sqy+sqz+sqw)));
-      pitch = (asin((float)(-2.0*(x*z-y*w)/(sqx+sqy+sqz+sqw))));
-      yaw = (atan2(2.0*(x*y+z*w),(float)(sqx-sqy-sqz+sqw)));
+      roll = (atan2(2.0*(y*z+x*w),(float)(-sqx-sqy+sqz+sqw)));   
+      pitch = (asin((float)(-2.0*(x*z-y*w)/(sqx+sqy+sqz+sqw)))); 
+      yaw = (atan2(2.0*(x*y+z*w),(float)(sqx-sqy-sqz+sqw)));     
       buffer = incoming;
     }
     if ( (list.length > 0) && (list[0].equals("Orientation:")) ) 
@@ -206,3 +190,4 @@ void handleToggleControlEvents(GToggleControl checkbox, GEvent event) {
     printSerial = printSerialCheckbox.isSelected(); 
   }
 }
+
