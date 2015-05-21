@@ -76,7 +76,24 @@ public:
         return _z;
     }
 
-    double magnitude()
+    double w() const
+    {
+        return _w;
+    }
+    double x() const
+    {
+        return _x;
+    }
+    double y() const
+    {
+        return _y;
+    }
+    double z() const
+    {
+        return _z;
+    }
+
+    double magnitude() const
     {
         double res = (_w*_w) + (_x*_x) + (_y*_y) + (_z*_z);
         return sqrt(res);
@@ -84,12 +101,12 @@ public:
 
     void normalize()
     {
-		double mag = magnitude();
+        double mag = magnitude();
         *this = this->scale(1/mag);
     }
 
 
-    Quaternion conjugate()
+    Quaternion conjugate() const
     {
         Quaternion q;
         q.w() = _w;
@@ -148,7 +165,7 @@ public:
         }
     }
 
-    void toAxisAngle(Vector<3>& axis, float& angle)
+    void toAxisAngle(Vector<3>& axis, float& angle) const
     {
         float sqw = sqrt(1-_w*_w);
         if(sqw == 0) //it's a singularity and divide by zero, avoid
@@ -160,7 +177,7 @@ public:
         axis.z() = _z / sqw;
     }
 
-    Matrix<3> toMatrix()
+    Matrix<3> toMatrix() const
     {
         Matrix<3> ret;
         ret.cell(0, 0) = 1-(2*(_y*_y))-(2*(_z*_z));
@@ -178,7 +195,18 @@ public:
     }
 
 
-    Vector<3> toEuler()
+    // Returns euler angles that represent the quaternion.  Angles are
+    // returned in rotation order and right-handed about the specified
+    // axes:
+    //
+    //   v[0] is applied 1st about z (ie, roll)
+    //   v[1] is applied 2nd about y (ie, pitch)
+    //   v[2] is applied 3rd about x (ie, yaw)
+    //
+    // Note that this means result.x() is not a rotation about x;
+    // similarly for result.z().
+    //
+    Vector<3> toEuler() const
     {
         Vector<3> ret;
         double sqw = _w*_w;
@@ -193,7 +221,7 @@ public:
         return ret;
     }
 
-    Vector<3> toAngularVelocity(float dt)
+    Vector<3> toAngularVelocity(float dt) const
     {
         Vector<3> ret;
         Quaternion one(1.0, 0.0, 0.0, 0.0);
@@ -208,13 +236,13 @@ public:
         return ret;
     }
 
-    Vector<3> rotateVector(Vector<2> v)
+    Vector<3> rotateVector(Vector<2> v) const
     {
         Vector<3> ret(v.x(), v.y(), 0.0);
         return rotateVector(ret);
     }
 
-    Vector<3> rotateVector(Vector<3> v)
+    Vector<3> rotateVector(Vector<3> v) const
     {
         Vector<3> qv(this->x(), this->y(), this->z());
         Vector<3> t;
@@ -223,7 +251,7 @@ public:
     }
 
 
-    Quaternion operator * (Quaternion q)
+    Quaternion operator * (Quaternion q) const
     {
         Quaternion ret;
         ret._w = ((_w*q._w) - (_x*q._x) - (_y*q._y) - (_z*q._z));
@@ -233,7 +261,7 @@ public:
         return ret;
     }
 
-    Quaternion operator + (Quaternion q)
+    Quaternion operator + (Quaternion q) const
     {
         Quaternion ret;
         ret._w = _w + q._w;
@@ -243,7 +271,7 @@ public:
         return ret;
     }
 
-    Quaternion operator - (Quaternion q)
+    Quaternion operator - (Quaternion q) const
     {
         Quaternion ret;
         ret._w = _w - q._w;
@@ -253,7 +281,7 @@ public:
         return ret;
     }
 
-    Quaternion operator / (float scalar)
+    Quaternion operator / (float scalar) const
     {
         Quaternion ret;
         ret._w = this->_w/scalar;
@@ -263,7 +291,7 @@ public:
         return ret;
     }
 
-    Quaternion operator * (float scalar)
+    Quaternion operator * (float scalar) const
     {
         Quaternion ret;
         ret._w = this->_w*scalar;
@@ -273,8 +301,8 @@ public:
         return ret;
     }
 
-	Quaternion scale(double scalar)
-	{
+    Quaternion scale(double scalar) const
+    {
         Quaternion ret;
         ret._w = this->_w*scalar;
         ret._x = this->_x*scalar;

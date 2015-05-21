@@ -125,8 +125,8 @@ public:
     {
         Vector ret;
 
-         //the cross product is only valid for vectors with 3 dimensions,
-         //with the exception of higher dimensional stuff that is beyond the intended scope of this library
+        // The cross product is only valid for vectors with 3 dimensions,
+        // with the exception of higher dimensional stuff that is beyond the intended scope of this library
         if(N != 3)
             return ret;
 
@@ -136,7 +136,7 @@ public:
         return ret;
     }
 
-    Vector scale(double scalar)
+    Vector scale(double scalar) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -144,7 +144,7 @@ public:
         return ret;
     }
 
-    Vector invert()
+    Vector invert() const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -164,12 +164,22 @@ public:
         return p_vec[n];
     }
 
+    double operator [](int n) const
+    {
+        return p_vec[n];
+    }
+
     double& operator ()(int n)
     {
         return p_vec[n];
     }
 
-    Vector operator + (Vector v)
+    double operator ()(int n) const
+    {
+        return p_vec[n];
+    }
+
+    Vector operator + (Vector v) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -177,7 +187,7 @@ public:
         return ret;
     }
 
-    Vector operator - (Vector v)
+    Vector operator - (Vector v) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -185,12 +195,12 @@ public:
         return ret;
     }
 
-    Vector operator * (double scalar)
+    Vector operator * (double scalar) const
     {
         return scale(scalar);
     }
 
-    Vector operator / (double scalar)
+    Vector operator / (double scalar) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -213,6 +223,9 @@ public:
     double& x() { return p_vec[0]; }
     double& y() { return p_vec[1]; }
     double& z() { return p_vec[2]; }
+    double x() const { return p_vec[0]; }
+    double y() const { return p_vec[1]; }
+    double z() const { return p_vec[2]; }
 
 
 private:
