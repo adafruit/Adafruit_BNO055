@@ -62,6 +62,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   if(id != BNO055_ID)
   {
     delay(1000); // hold on for boot
+    id = read8(BNO055_CHIP_ID_ADDR);
     if(id != BNO055_ID) {
       return false;  // still not? ok bail
     }
@@ -320,7 +321,10 @@ imu::Quaternion Adafruit_BNO055::getQuat(void)
   z = (((uint16_t)buffer[7]) << 8) | ((uint16_t)buffer[6]);
 
   /* Assign to Quaternion */
-  imu::Quaternion quat((double)w, (double)x, (double)y, (double)z);
+  /* See http://ae-bst.resource.bosch.com/media/products/dokumente/bno055/BST_BNO055_DS000_12~1.pdf
+     3.6.5.5 Orientation (Quaternion)  */
+  const double scale = (1.0 / (1<<14));
+  imu::Quaternion quat(scale * w, scale * x, scale * y, scale * z);
   return quat;
 }
 
