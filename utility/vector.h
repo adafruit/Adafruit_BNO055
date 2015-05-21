@@ -34,20 +34,17 @@ template <uint8_t N> class Vector
 public:
     Vector()
     {
-        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
     }
 
     Vector(double a)
     {
-        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         p_vec[0] = a;
     }
 
     Vector(double a, double b)
     {
-        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         p_vec[0] = a;
         p_vec[1] = b;
@@ -55,7 +52,6 @@ public:
 
     Vector(double a, double b, double c)
     {
-        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         p_vec[0] = a;
         p_vec[1] = b;
@@ -64,7 +60,6 @@ public:
 
     Vector(double a, double b, double c, double d)
     {
-        p_vec = &p_vec_data[0];
         memset(p_vec, 0, sizeof(double)*N);
         p_vec[0] = a;
         p_vec[1] = b;
@@ -74,9 +69,7 @@ public:
 
     Vector(const Vector<N> &v)
     {
-        p_vec = &p_vec_data[0];
-        memset(p_vec, 0, sizeof(double)*N);
-        for (int x = 0; x < N; x++ )
+        for (int x = 0; x < N; x++)
             p_vec[x] = v.p_vec[x];
     }
 
@@ -229,8 +222,7 @@ public:
 
 
 private:
-    double* p_vec;
-    double  p_vec_data[N];
+    double  p_vec[N];
 };
 
 
