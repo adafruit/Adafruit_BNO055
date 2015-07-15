@@ -31,7 +31,7 @@
 /***************************************************************************
  CONSTRUCTOR
  ***************************************************************************/
- 
+
 /**************************************************************************/
 /*!
     @brief  Instantiates a new Adafruit_BNO055 class
@@ -78,13 +78,13 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
     delay(10);
   }
   delay(50);
- 
+
   /* Set to normal power mode */
   write8(BNO055_PWR_MODE_ADDR, POWER_MODE_NORMAL);
   delay(10);
 
   write8(BNO055_PAGE_ID_ADDR, 0);
-  
+
   /* Set the output units */
   /*
   uint8_t unitsel = (0 << 7) | // Orientation = Android
@@ -156,7 +156,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
 
   write8(BNO055_SYS_TRIGGER_ADDR, read8(BNO055_SYS_TRIGGER_ADDR) | 0x1);
   delay(1000);
-  
+
   /* System Status (see section 4.3.58)
      ---------------------------------
      0 = Idle
@@ -166,21 +166,21 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
      4 = Executing Self-Test
      5 = Sensor fusio algorithm running
      6 = System running without fusion algorithms */
-  
+
   if (system_status != 0)
     *system_status    = read8(BNO055_SYS_STAT_ADDR);
-  
+
   /* Self Test Results (see section )
      --------------------------------
      1 = test passed, 0 = test failed
-  
+
      Bit 0 = Accelerometer self test
      Bit 1 = Magnetometer self test
      Bit 2 = Gyroscope self test
      Bit 3 = MCU self test
 
      0x0F = all good! */
-  
+
   if (self_test_result != 0)
     *self_test_result = read8(BNO055_SELFTEST_RESULT_ADDR);
 
@@ -197,7 +197,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
      8 = Accelerometer power mode not available
      9 = Fusion algorithm configuration error
      A = Sensor configuration error */
-  
+
   if (system_error != 0)
     *system_error     = read8(BNO055_SYS_ERR_ADDR);
 
@@ -227,7 +227,7 @@ void Adafruit_BNO055::getRevInfo(adafruit_bno055_rev_info_t* info)
 
   /* Check the SW revision */
   info->bl_rev    = read8(BNO055_BL_REV_ID_ADDR);
-  
+
   a = read8(BNO055_SW_REV_ID_LSB_ADDR);
   b = read8(BNO055_SW_REV_ID_MSB_ADDR);
   info->sw_rev = (((uint16_t)b) << 8) | ((uint16_t)a);
@@ -235,7 +235,30 @@ void Adafruit_BNO055::getRevInfo(adafruit_bno055_rev_info_t* info)
 
 /**************************************************************************/
 /*!
-    @brief  Gets teh temperature in degrees celsius
+    @brief  Gets current calibration state.  Each value should be a uint8_t
+            pointer and it will be set to 0 if not calibrated and 3 if
+            fully calibrated.
+*/
+/**************************************************************************/
+void Adafruit_BNO055::getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel, uint8_t* mag) {
+  uint8_t calData = read8(BNO055_CALIB_STAT_ADDR);
+  if (sys != NULL) {
+    *sys = (calData >> 6) & 0x03;
+  }
+  if (gyro != NULL) {
+    *gyro = (calData >> 4) & 0x03;
+  }
+  if (accel != NULL) {
+    *accel = (calData >> 2) & 0x03;
+  }
+  if (mag != NULL) {
+    *mag = calData & 0x03;
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the temperature in degrees celsius
 */
 /**************************************************************************/
 int8_t Adafruit_BNO055::getTemp(void)
@@ -254,13 +277,13 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type)
   imu::Vector<3> xyz;
   uint8_t buffer[6];
   memset (buffer, 0, 6);
-  
+
   int16_t x, y, z;
   x = y = z = 0;
-  
+
   /* Read vector data (6 bytes) */
   readLen((adafruit_bno055_reg_t)vector_type, buffer, 6);
-  
+
   x = ((int16_t)buffer[0]) | (((int16_t)buffer[1]) << 8);
   y = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
   z = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
@@ -296,7 +319,7 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type)
       xyz[2] = ((double)z)/100.0;
       break;
   }
-  
+
   return xyz;
 }
 
@@ -309,10 +332,10 @@ imu::Quaternion Adafruit_BNO055::getQuat(void)
 {
   uint8_t buffer[8];
   memset (buffer, 0, 8);
-  
+
   int16_t x, y, z, w;
   x = y = z = w = 0;
-  
+
   /* Read quat data (8 bytes) */
   readLen(BNO055_QUATERNION_DATA_W_LSB_ADDR, buffer, 8);
   w = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
@@ -407,7 +430,7 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
 byte Adafruit_BNO055::read8(adafruit_bno055_reg_t reg )
 {
   byte value = 0;
-  
+
   Wire.beginTransmission(_address);
   #if ARDUINO >= 100
     Wire.write((uint8_t)reg);
@@ -421,7 +444,7 @@ byte Adafruit_BNO055::read8(adafruit_bno055_reg_t reg )
   #else
     value = Wire.receive();
   #endif
-  
+
   return value;
 }
 
@@ -443,7 +466,7 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
 
   /* Wait until data is available */
   while (Wire.available() < len);
-    
+
   for (uint8_t i = 0; i < len; i++)
   {
     #if ARDUINO >= 100
@@ -452,7 +475,7 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
       buffer[i] = Wire.receive();
     #endif
   }
-  
+
   /* ToDo: Check for errors! */
   return true;
 }
