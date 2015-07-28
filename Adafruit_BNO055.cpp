@@ -464,9 +464,6 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
   Wire.endTransmission();
   Wire.requestFrom(_address, (byte)len);
 
-  /* Wait until data is available */
-  while (Wire.available() < len);
-
   for (uint8_t i = 0; i < len; i++)
   {
     #if ARDUINO >= 100
