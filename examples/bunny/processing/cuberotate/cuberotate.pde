@@ -15,7 +15,6 @@ OBJModel model;
 
 // Serial port state.
 Serial       port;
-String       buffer = "";
 final String serialConfigFile = "serialconfig.txt";
 boolean      printSerial = false;
 
@@ -23,11 +22,12 @@ boolean      printSerial = false;
 GPanel    configPanel;
 GDropList serialList;
 GLabel    serialLabel;
+GLabel    calLabel;
 GCheckbox printSerialCheckbox;
 
 void setup()
 {
-  size(400, 550, OPENGL);
+  size(640, 480, OPENGL);
   frameRate(30);
   model = new OBJModel(this);
   model.load("bunny.obj");
@@ -58,6 +58,8 @@ void setup()
   serialList = new GDropList(this, 90, 20, 200, 200, 6);
   serialList.setItems(availablePorts, selectedPort);
   configPanel.addControl(serialList);
+  calLabel = new GLabel(this, 300, 20, 350, 25, "Calibration: Sys=? Gyro=? Accel=? Mag=?");
+  configPanel.addControl(calLabel); 
   printSerialCheckbox = new GCheckbox(this, 5, 50, 200, 20, "Print serial data");
   printSerialCheckbox.setSelected(printSerial);
   configPanel.addControl(printSerialCheckbox);
@@ -78,8 +80,8 @@ void draw()
   pointLight(200, 200, 255, -400, 400,  500);
   pointLight(255, 255, 255,    0,   0, -500);
   
-  // Displace objects from 0,0
-  translate(200, 300, 0);
+  // Move bunny from 0,0 in upper left corner to roughly center of screen.
+  translate(300, 380, 0);
   
   // Rotate shapes around the X/Y/Z axis (values in radians, 0..Pi*2)
   rotateZ(radians(roll));
@@ -109,17 +111,22 @@ void serialEvent(Serial p)
       roll  = float(list[3]); // Roll = Z
       pitch = float(list[2]); // Pitch = Y 
       yaw   = float(list[1]); // Yaw/Heading = X
-      buffer = incoming;
     }
     if ( (list.length > 0) && (list[0].equals("Alt:")) ) 
     {
       alt  = float(list[1]);
-      buffer = incoming;
     }
     if ( (list.length > 0) && (list[0].equals("Temp:")) ) 
     {
       temp  = float(list[1]);
-      buffer = incoming;
+    }
+    if ( (list.length > 0) && (list[0].equals("Calibration:")) )
+    {
+      int sysCal   = int(list[1]);
+      int gyroCal  = int(list[2]);
+      int accelCal = int(list[3]);
+      int magCal   = int(list[4]);
+      calLabel.setText("Calibration: Sys=" + sysCal + " Gyro=" + gyroCal + " Accel=" + accelCal + " Mag=" + magCal);
     }
   }
 }
