@@ -148,14 +148,7 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
 /**************************************************************************/
 void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test_result, uint8_t *system_error)
 {
-  adafruit_bno055_opmode_t backupmode = _mode;
-
-  setMode(OPERATION_MODE_CONFIG);
-  delay(20);
   write8(BNO055_PAGE_ID_ADDR, 0);
-
-  write8(BNO055_SYS_TRIGGER_ADDR, read8(BNO055_SYS_TRIGGER_ADDR) | 0x1);
-  delay(1000);
 
   /* System Status (see section 4.3.58)
      ---------------------------------
@@ -201,8 +194,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
   if (system_error != 0)
     *system_error     = read8(BNO055_SYS_ERR_ADDR);
 
-  setMode(backupmode);
-  delay(20);
+  delay(200);
 }
 
 /**************************************************************************/
