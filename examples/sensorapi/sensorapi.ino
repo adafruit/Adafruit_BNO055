@@ -68,6 +68,7 @@ void displaySensorStatus(void)
   bno.getSystemStatus(&system_status, &self_test_results, &system_error);
 
   /* Display the results in the Serial Monitor */
+  Serial.println("");
   Serial.print("System Status: 0x");
   Serial.println(system_status, HEX);
   Serial.print("Self Test:     0x");
@@ -107,7 +108,7 @@ void displayCalStatus(void)
   Serial.print(" A:");
   Serial.print(accel, DEC);
   Serial.print(" M:");
-  Serial.println(mag, DEC);
+  Serial.print(mag, DEC);
 }
 
 /**************************************************************************/
@@ -134,7 +135,7 @@ void setup(void)
   displaySensorDetails();
 
   /* Optional: Display current status */
-  // displaySensorStatus();
+  displaySensorStatus();
 
   bno.setExtCrystalUse(true);
 }
@@ -160,7 +161,10 @@ void loop(void)
   Serial.print(event.orientation.z, 4);
 
   /* Optional: Display calibration status */
-  // displayCalStatus();
+  displayCalStatus();
+
+  /* Optional: Display sensor status (debug only) */
+  //displaySensorStatus();
 
   /* New line for the next sample */
   Serial.println("");
