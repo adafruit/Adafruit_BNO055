@@ -181,7 +181,6 @@ void setup(void)
 	}
 	else
 	{
-		foundCalib = true;
 		Serial.println("Found Calibration for this sensor in EEPROM.");
 		eeAddress += sizeof(long);
 		EEPROM.get(eeAddress, calibrationData);
@@ -192,6 +191,7 @@ void setup(void)
 		bno.setSensorOffsets(calibrationData);
 
 		Serial.println("\n\nCalibration data loaded into BNO055");
+        foundCalib = true;
 	}
 
 	delay(1000);
@@ -206,22 +206,45 @@ void setup(void)
 
 	sensors_event_t event;
 	bno.getEvent(&event);
-	Serial.println("Move sensor slightly to calibrate magnetometers");
-	while (!bno.isFullyCalibrated())
-	{
-		bno.getEvent(&event);
-		delay(BNO055_SAMPLERATE_DELAY_MS);
-	}
+    if(foundCalib){
+        Serial.println("Move sensor slightly to calibrate magnetometers");
+        while (!bno.isFullyCalibrated())
+        {
+            bno.getEvent(&event);
+            delay(BNO055_SAMPLERATE_DELAY_MS);
+        }
+    }
+    else
+    {
+        while (!bno.isFullyCalibrated())
+        {
+            bno.getEvent(&event);
+            
+            Serial.print("X: ");
+            Serial.print(event.orientation.x, 4);
+            Serial.print("\tY: ");
+            Serial.print(event.orientation.y, 4);
+            Serial.print("\tZ: ");
+            Serial.print(event.orientation.z, 4);
+            
+            /* Optional: Display calibration status */
+            displayCalStatus();
+            
+            /* New line for the next sample */
+            Serial.println("");
+            
+            /* Wait the specified delay before requesting new data */
+            delay(BNO055_SAMPLERATE_DELAY_MS);
+        }
+    }
 
 	Serial.println("\nFully calibrated!");
 	Serial.println("--------------------------------");
 	Serial.println("Calibration Results: ");
 	bno.getSensorOffsets(calibrationData);
 	displaySensorOffsets(calibrationData);
-	Serial.println("\n--------------------------------\n\n");
-
-	//if (!foundCalib){
-	Serial.println("\n\nStoring calibration data to EEPROM...");
+    
+    Serial.println("\n\nStoring calibration data to EEPROM...");
 
 	eeAddress = 0;
 	bno.getSensor(&sensor);
@@ -232,7 +255,8 @@ void setup(void)
 	eeAddress += sizeof(long);
 	EEPROM.put(eeAddress, calibrationData);
 	Serial.println("Data stored to EEPROM.\n");
-	//}
+    
+	Serial.println("\n--------------------------------\n");
 }
 
 void loop() {
@@ -257,6 +281,6 @@ void loop() {
 	/* New line for the next sample */
 	Serial.println("");
 
-	/* Wait the specified delay before requesting nex data */
+	/* Wait the specified delay before requesting new data */
 	delay(BNO055_SAMPLERATE_DELAY_MS);
 }
