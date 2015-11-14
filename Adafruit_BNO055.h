@@ -40,6 +40,24 @@
 #define BNO055_ADDRESS_B (0x29)
 #define BNO055_ID        (0xA0)
 
+#define NUM_BNO055_OFFSET_REGISTERS (22)
+
+typedef struct
+{
+    uint16_t accel_offset_x;
+    uint16_t accel_offset_y;
+    uint16_t accel_offset_z;
+    uint16_t gyro_offset_x;
+    uint16_t gyro_offset_y;
+    uint16_t gyro_offset_z;
+    uint16_t mag_offset_x;
+    uint16_t mag_offset_y;
+    uint16_t mag_offset_z;
+
+    uint16_t accel_radius;
+    uint16_t mag_radius;
+} adafruit_bno055_offsets_t;
+
 class Adafruit_BNO055 : public Adafruit_Sensor
 {
   public:
@@ -257,6 +275,13 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
     void  getSensor ( sensor_t* );
+
+    /* Functions to deal with raw calibration data */
+    bool  getSensorOffsets(uint8_t* calibData);
+    bool  getSensorOffsets(adafruit_bno055_offsets_t &offsets_type);
+    void  setSensorOffsets(const uint8_t* calibData);
+    void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
+    bool  isFullyCalibrated(void);
 
   private:
     byte  read8   ( adafruit_bno055_reg_t );

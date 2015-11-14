@@ -389,6 +389,154 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event)
   return true;
 }
 
+/**************************************************************************/
+/*!
+@brief  Reads the sensor's offset registers into a byte array
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::getSensorOffsets(uint8_t* calibData)
+{
+    if (isFullyCalibrated())
+    {
+        adafruit_bno055_opmode_t lastMode = _mode;
+        setMode(OPERATION_MODE_CONFIG);
+
+        readLen(ACCEL_OFFSET_X_LSB_ADDR, calibData, NUM_BNO055_OFFSET_REGISTERS);
+
+        setMode(lastMode);
+        return true;
+    }
+    return false;
+}
+
+/**************************************************************************/
+/*!
+@brief  Reads the sensor's offset registers into an offset struct
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::getSensorOffsets(adafruit_bno055_offsets_t &offsets_type)
+{
+    if (isFullyCalibrated())
+    {
+        adafruit_bno055_opmode_t lastMode = _mode;
+        setMode(OPERATION_MODE_CONFIG);
+        delay(25);
+
+        offsets_type.accel_offset_x = (read8(ACCEL_OFFSET_X_MSB_ADDR) << 8) | (read8(ACCEL_OFFSET_X_LSB_ADDR));
+        offsets_type.accel_offset_y = (read8(ACCEL_OFFSET_Y_MSB_ADDR) << 8) | (read8(ACCEL_OFFSET_Y_LSB_ADDR));
+        offsets_type.accel_offset_z = (read8(ACCEL_OFFSET_Z_MSB_ADDR) << 8) | (read8(ACCEL_OFFSET_Z_LSB_ADDR));
+
+        offsets_type.gyro_offset_x = (read8(GYRO_OFFSET_X_MSB_ADDR) << 8) | (read8(GYRO_OFFSET_X_LSB_ADDR));
+        offsets_type.gyro_offset_y = (read8(GYRO_OFFSET_Y_MSB_ADDR) << 8) | (read8(GYRO_OFFSET_Y_LSB_ADDR));
+        offsets_type.gyro_offset_z = (read8(GYRO_OFFSET_Z_MSB_ADDR) << 8) | (read8(GYRO_OFFSET_Z_LSB_ADDR));
+
+        offsets_type.mag_offset_x = (read8(MAG_OFFSET_X_MSB_ADDR) << 8) | (read8(MAG_OFFSET_X_LSB_ADDR));
+        offsets_type.mag_offset_y = (read8(MAG_OFFSET_Y_MSB_ADDR) << 8) | (read8(MAG_OFFSET_Y_LSB_ADDR));
+        offsets_type.mag_offset_z = (read8(MAG_OFFSET_Z_MSB_ADDR) << 8) | (read8(MAG_OFFSET_Z_LSB_ADDR));
+
+        offsets_type.accel_radius = (read8(ACCEL_RADIUS_MSB_ADDR) << 8) | (read8(ACCEL_RADIUS_LSB_ADDR));
+        offsets_type.mag_radius = (read8(MAG_RADIUS_MSB_ADDR) << 8) | (read8(MAG_RADIUS_LSB_ADDR));
+
+        setMode(lastMode);
+        return true;
+    }
+    return false;
+}
+
+
+/**************************************************************************/
+/*!
+@brief  Writes an array of calibration values to the sensor's offset registers
+*/
+/**************************************************************************/
+void Adafruit_BNO055::setSensorOffsets(const uint8_t* calibData)
+{
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    delay(25);
+
+    /* A writeLen() would make this much cleaner */
+    write8(ACCEL_OFFSET_X_LSB_ADDR, calibData[0]);
+    write8(ACCEL_OFFSET_X_MSB_ADDR, calibData[1]);
+    write8(ACCEL_OFFSET_Y_LSB_ADDR, calibData[2]);
+    write8(ACCEL_OFFSET_Y_MSB_ADDR, calibData[3]);
+    write8(ACCEL_OFFSET_Z_LSB_ADDR, calibData[4]);
+    write8(ACCEL_OFFSET_Z_MSB_ADDR, calibData[5]);
+
+    write8(GYRO_OFFSET_X_LSB_ADDR, calibData[6]);
+    write8(GYRO_OFFSET_X_MSB_ADDR, calibData[7]);
+    write8(GYRO_OFFSET_Y_LSB_ADDR, calibData[8]);
+    write8(GYRO_OFFSET_Y_MSB_ADDR, calibData[9]);
+    write8(GYRO_OFFSET_Z_LSB_ADDR, calibData[10]);
+    write8(GYRO_OFFSET_Z_MSB_ADDR, calibData[11]);
+
+    write8(MAG_OFFSET_X_LSB_ADDR, calibData[12]);
+    write8(MAG_OFFSET_X_MSB_ADDR, calibData[13]);
+    write8(MAG_OFFSET_Y_LSB_ADDR, calibData[14]);
+    write8(MAG_OFFSET_Y_MSB_ADDR, calibData[15]);
+    write8(MAG_OFFSET_Z_LSB_ADDR, calibData[16]);
+    write8(MAG_OFFSET_Z_MSB_ADDR, calibData[17]);
+
+    write8(ACCEL_RADIUS_LSB_ADDR, calibData[18]);
+    write8(ACCEL_RADIUS_MSB_ADDR, calibData[19]);
+
+    write8(MAG_RADIUS_LSB_ADDR, calibData[20]);
+    write8(MAG_RADIUS_MSB_ADDR, calibData[21]);
+
+    setMode(lastMode);
+}
+
+/**************************************************************************/
+/*!
+@brief  Writes to the sensor's offset registers from an offset struct
+*/
+/**************************************************************************/
+void Adafruit_BNO055::setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type)
+{
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    delay(25);
+
+    write8(ACCEL_OFFSET_X_LSB_ADDR, (offsets_type.accel_offset_x) & 0x0FF);
+    write8(ACCEL_OFFSET_X_MSB_ADDR, (offsets_type.accel_offset_x >> 8) & 0x0FF);
+    write8(ACCEL_OFFSET_Y_LSB_ADDR, (offsets_type.accel_offset_y) & 0x0FF);
+    write8(ACCEL_OFFSET_Y_MSB_ADDR, (offsets_type.accel_offset_y >> 8) & 0x0FF);
+    write8(ACCEL_OFFSET_Z_LSB_ADDR, (offsets_type.accel_offset_z) & 0x0FF);
+    write8(ACCEL_OFFSET_Z_MSB_ADDR, (offsets_type.accel_offset_z >> 8) & 0x0FF);
+
+    write8(GYRO_OFFSET_X_LSB_ADDR, (offsets_type.gyro_offset_x) & 0x0FF);
+    write8(GYRO_OFFSET_X_MSB_ADDR, (offsets_type.gyro_offset_x >> 8) & 0x0FF);
+    write8(GYRO_OFFSET_Y_LSB_ADDR, (offsets_type.gyro_offset_y) & 0x0FF);
+    write8(GYRO_OFFSET_Y_MSB_ADDR, (offsets_type.gyro_offset_y >> 8) & 0x0FF);
+    write8(GYRO_OFFSET_Z_LSB_ADDR, (offsets_type.gyro_offset_z) & 0x0FF);
+    write8(GYRO_OFFSET_Z_MSB_ADDR, (offsets_type.gyro_offset_z >> 8) & 0x0FF);
+
+    write8(MAG_OFFSET_X_LSB_ADDR, (offsets_type.mag_offset_x) & 0x0FF);
+    write8(MAG_OFFSET_X_MSB_ADDR, (offsets_type.mag_offset_x >> 8) & 0x0FF);
+    write8(MAG_OFFSET_Y_LSB_ADDR, (offsets_type.mag_offset_y) & 0x0FF);
+    write8(MAG_OFFSET_Y_MSB_ADDR, (offsets_type.mag_offset_y >> 8) & 0x0FF);
+    write8(MAG_OFFSET_Z_LSB_ADDR, (offsets_type.mag_offset_z) & 0x0FF);
+    write8(MAG_OFFSET_Z_MSB_ADDR, (offsets_type.mag_offset_z >> 8) & 0x0FF);
+
+    write8(ACCEL_RADIUS_LSB_ADDR, (offsets_type.accel_radius) & 0x0FF);
+    write8(ACCEL_RADIUS_MSB_ADDR, (offsets_type.accel_radius >> 8) & 0x0FF);
+
+    write8(MAG_RADIUS_LSB_ADDR, (offsets_type.mag_radius) & 0x0FF);
+    write8(MAG_RADIUS_MSB_ADDR, (offsets_type.mag_radius >> 8) & 0x0FF);
+
+    setMode(lastMode);
+}
+
+bool Adafruit_BNO055::isFullyCalibrated(void)
+{
+    uint8_t system, gyro, accel, mag;
+    getCalibration(&system, &gyro, &accel, &mag);
+    if (system < 3 || gyro < 3 || accel < 3 || mag < 3)
+        return false;
+    return true;
+}
+
+
 /***************************************************************************
  PRIVATE FUNCTIONS
  ***************************************************************************/
