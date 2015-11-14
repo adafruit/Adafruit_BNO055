@@ -177,11 +177,11 @@ void setup(void)
 	bno.getSensor(&sensor);
 	if (bnoID != sensor.sensor_id)
 	{
-		Serial.println("No Calibration Data for this sensor exists in EEPROM");
+		Serial.println("\nNo Calibration Data for this sensor exists in EEPROM");
 	}
 	else
 	{
-		Serial.println("Found Calibration for this sensor in EEPROM.");
+		Serial.println("\nFound Calibration for this sensor in EEPROM.");
 		eeAddress += sizeof(long);
 		EEPROM.get(eeAddress, calibrationData);
 
@@ -241,8 +241,9 @@ void setup(void)
 	Serial.println("\nFully calibrated!");
 	Serial.println("--------------------------------");
 	Serial.println("Calibration Results: ");
-	bno.getSensorOffsets(calibrationData);
-	displaySensorOffsets(calibrationData);
+	adafruit_bno055_offsets_t newCalib;
+	bno.getSensorOffsets(newCalib);
+	displaySensorOffsets(newCalib);
     
     Serial.println("\n\nStoring calibration data to EEPROM...");
 
@@ -253,10 +254,11 @@ void setup(void)
 	EEPROM.put(eeAddress, bnoID);
 
 	eeAddress += sizeof(long);
-	EEPROM.put(eeAddress, calibrationData);
-	Serial.println("Data stored to EEPROM.\n");
+	EEPROM.put(eeAddress, newCalib);
+	Serial.println("Data stored to EEPROM.");
     
 	Serial.println("\n--------------------------------\n");
+	delay(500);
 }
 
 void loop() {

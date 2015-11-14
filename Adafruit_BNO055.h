@@ -44,18 +44,18 @@
 
 typedef struct
 {
-	int16_t accel_offset_x;
-	int16_t accel_offset_y;
-	int16_t accel_offset_z;
-	int16_t gyro_offset_x;
-	int16_t gyro_offset_y;
-	int16_t gyro_offset_z;
-	int16_t mag_offset_x;
-	int16_t mag_offset_y;
-	int16_t mag_offset_z;
+	uint16_t accel_offset_x;
+	uint16_t accel_offset_y;
+	uint16_t accel_offset_z;
+	uint16_t gyro_offset_x;
+	uint16_t gyro_offset_y;
+	uint16_t gyro_offset_z;
+	uint16_t mag_offset_x;
+	uint16_t mag_offset_y;
+	uint16_t mag_offset_z;
 
-	int16_t accel_radius;
-	int16_t mag_radius;
+	uint16_t accel_radius;
+	uint16_t mag_radius;
 } adafruit_bno055_offsets_t;
 
 class Adafruit_BNO055 : public Adafruit_Sensor
@@ -279,9 +279,9 @@ public:
 	void  getSensor(sensor_t*);
 
 	/* Functions to deal with raw calibration data */
-	bool  getSensorOffsets(int8_t* calibData);
+	bool  getSensorOffsets(uint8_t* calibData);
 	bool  getSensorOffsets(adafruit_bno055_offsets_t &offsets_type);
-	void  setSensorOffsets(const int8_t* calibData);
+	void  setSensorOffsets(const uint8_t* calibData);
 	void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
 	bool  isFullyCalibrated(void);
 

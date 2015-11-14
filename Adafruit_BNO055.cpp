@@ -395,7 +395,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event)
 @brief  Reads the sensor's offset registers into a byte array
 */
 /**************************************************************************/
-bool Adafruit_BNO055::getSensorOffsets(int8_t* calibData)
+bool Adafruit_BNO055::getSensorOffsets(uint8_t* calibData)
 {
 	if (isFullyCalibrated())
 	{
@@ -450,7 +450,7 @@ bool Adafruit_BNO055::getSensorOffsets(adafruit_bno055_offsets_t &offsets_type)
 @brief  Writes an array of calibration values to the sensor's offset registers
 */
 /**************************************************************************/
-void Adafruit_BNO055::setSensorOffsets(const int8_t* calibData)
+void Adafruit_BNO055::setSensorOffsets(const uint8_t* calibData)
 {
 	adafruit_bno055_opmode_t lastMode = _mode;
 	setMode(OPERATION_MODE_CONFIG);
