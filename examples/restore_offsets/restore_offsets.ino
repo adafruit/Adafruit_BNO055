@@ -120,25 +120,25 @@ void displayCalStatus(void)
 void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData)
 {
     Serial.print("Accelerometer: ");
-    Serial.print((int)calibData.accel_offset_x); Serial.print(" ");
-    Serial.print((int)calibData.accel_offset_y); Serial.print(" ");
-    Serial.print((int)calibData.accel_offset_z); Serial.print(" ");
+    Serial.print((int16_t)calibData.accel_offset_x); Serial.print(" ");
+    Serial.print((int16_t)calibData.accel_offset_y); Serial.print(" ");
+    Serial.print((int16_t)calibData.accel_offset_z); Serial.print(" ");
 
     Serial.print("\nGyro: ");
-    Serial.print((int)calibData.gyro_offset_x); Serial.print(" ");
-    Serial.print((int)calibData.gyro_offset_y); Serial.print(" ");
-    Serial.print((int)calibData.gyro_offset_z); Serial.print(" ");
+    Serial.print((int16_t)calibData.gyro_offset_x); Serial.print(" ");
+    Serial.print((int16_t)calibData.gyro_offset_y); Serial.print(" ");
+    Serial.print((int16_t)calibData.gyro_offset_z); Serial.print(" ");
 
     Serial.print("\nMag: ");
-    Serial.print((int)calibData.mag_offset_x); Serial.print(" ");
-    Serial.print((int)calibData.mag_offset_y); Serial.print(" ");
-    Serial.print((int)calibData.mag_offset_z); Serial.print(" ");
+    Serial.print((int16_t)calibData.mag_offset_x); Serial.print(" ");
+    Serial.print((int16_t)calibData.mag_offset_y); Serial.print(" ");
+    Serial.print((int16_t)calibData.mag_offset_z); Serial.print(" ");
 
     Serial.print("\nAccel Radius: ");
-    Serial.print((int)calibData.accel_radius);
+    Serial.print((int16_t)calibData.accel_radius);
 
     Serial.print("\nMag Radius: ");
-    Serial.print((int)calibData.mag_radius);
+    Serial.print((int16_t)calibData.mag_radius);
 }
 
 
