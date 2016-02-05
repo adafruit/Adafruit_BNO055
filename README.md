@@ -3,6 +3,8 @@
 This driver is for the Adafruit BNO055 Breakout (http://www.adafruit.com/products/2472),
 and is based on Adafruit's Unified Sensor Library (Adafruit_Sensor).
 
+To work with the Arduino Zero, the BNO055's ADR pin must be high, and an "#error" must be removed from the .h file.
+
 ## What is the Adafruit Unified Sensor Library? ##
 
 The Adafruit Unified Sensor Library ([Adafruit_Sensor](https://github.com/adafruit/Adafruit_Sensor)) provides a common interface and data type for any supported sensor.  It defines some basic information about the sensor (sensor limits, etc.), and returns standard SI units of a specific type and scale for each supported sensor type.
