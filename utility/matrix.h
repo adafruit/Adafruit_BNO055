@@ -147,16 +147,15 @@ public:
         return ret;
     }
 
-    Matrix operator * (Matrix m)
+    Matrix operator*(const Matrix& m) const
     {
         Matrix ret;
-        for(int x = 0; x < N; x++)
+        for (int i = 0; i < N; i++)
         {
-            for(int y = 0; y < N; y++)
+            Vector<N> row = row_to_vector(i);
+            for (int j = 0; j < N; j++)
             {
-                Vector<N> row = row_to_vector(x);
-                Vector<N> col = m.col_to_vector(y);
-                ret.cell(x, y) = row.dot(col);
+                ret.cell(i, j) = row.dot(m.col_to_vector(j));
             }
         }
         return ret;
