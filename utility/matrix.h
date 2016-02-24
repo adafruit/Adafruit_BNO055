@@ -103,14 +103,22 @@ public:
         }
     }
 
-    double& operator ()(int x, int y)
+    double operator()(int i, int j) const
     {
-        return _cell[x*N+y];
+        return cell(i, j);
+    }
+    double& operator()(int i, int j)
+    {
+        return cell(i, j);
     }
 
-    double& cell(int x, int y)
+    double cell(int i, int j) const
     {
-        return _cell[x*N+y];
+        return _cell_data[i*N+j];
+    }
+    double& cell(int i, int j)
+    {
+        return _cell_data[i*N+j];
     }
 
 
