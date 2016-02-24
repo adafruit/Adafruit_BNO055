@@ -192,15 +192,10 @@ public:
 
     double determinant() const
     {
-        if(N == 1)
-            return cell(0, 0);
-
-        float det = 0.0;
-        for(int i = 0; i < N; i++ )
-        {
-            Matrix<N-1> minor = minor_matrix(0, i);
-            det += (i%2==1?-1.0:1.0) * cell(0, i) * minor.determinant();
-        }
+        // specialization for N == 1 given below this class
+        double det = 0.0, sign = 1.0;
+        for (int i = 0; i < N; ++i, sign = -sign)
+            det += sign * cell(0, i) * minor_matrix(0, i).determinant();
         return det;
     }
 
@@ -225,6 +220,12 @@ private:
     double  _cell_data[N*N];
 };
 
+
+template<>
+inline double Matrix<1>::determinant() const
+{
+    return cell(0, 0);
+}
 
 };
 
