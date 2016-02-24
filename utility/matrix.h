@@ -117,41 +117,32 @@ public:
     }
 
 
-    Matrix operator + (Matrix m)
+    Matrix operator+(const Matrix& m) const
     {
         Matrix ret;
-        for(int x = 0; x < N; x++)
+        for (int ij = 0; ij < N*N; ++ij)
         {
-            for(int y = 0; y < N; y++)
-            {
-                ret._cell[x*N+y] = _cell[x*N+y] + m._cell[x*N+y];
-            }
+            ret._cell_data[ij] = _cell_data[ij] + m._cell_data[ij];
         }
         return ret;
     }
 
-    Matrix operator - (Matrix m)
+    Matrix operator-(const Matrix& m) const
     {
         Matrix ret;
-        for(int x = 0; x < N; x++)
+        for (int ij = 0; ij < N*N; ++ij)
         {
-            for(int y = 0; y < N; y++)
-            {
-                ret._cell[x*N+y] = _cell[x*N+y] - m._cell[x*N+y];
-            }
+            ret._cell_data[ij] = _cell_data[ij] - m._cell_data[ij];
         }
         return ret;
     }
 
-    Matrix operator * (double scalar)
+    Matrix operator*(double scalar) const
     {
         Matrix ret;
-        for(int x = 0; x < N; x++)
+        for (int ij = 0; ij < N*N; ++ij)
         {
-            for(int y = 0; y < N; y++)
-            {
-                ret._cell[x*N+y] = _cell[x*N+y] * scalar;
-            }
+            ret._cell_data[ij] = _cell_data[ij] * scalar;
         }
         return ret;
     }
