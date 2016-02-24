@@ -20,10 +20,8 @@
 #ifndef IMUMATH_MATRIX_HPP
 #define IMUMATH_MATRIX_HPP
 
-#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <math.h>
 
 #include "vector.h"
 
