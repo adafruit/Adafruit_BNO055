@@ -155,20 +155,20 @@ public:
             Vector<N> row = row_to_vector(i);
             for (int j = 0; j < N; j++)
             {
-                ret.cell(i, j) = row.dot(m.col_to_vector(j));
+                ret(i, j) = row.dot(m.col_to_vector(j));
             }
         }
         return ret;
     }
 
-    Matrix transpose()
+    Matrix transpose() const
     {
         Matrix ret;
-        for(int x = 0; x < N; x++)
+        for (int i = 0; i < N; i++)
         {
-            for(int y = 0; y < N; y++)
+            for (int j = 0; j < N; j++)
             {
-                ret.cell(y, x) = cell(x, y);
+                ret(j, i) = cell(i, j);
             }
         }
         return ret;
