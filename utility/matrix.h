@@ -192,7 +192,7 @@ public:
         return ret;
     }
 
-    double determinant()
+    double determinant() const
     {
         if(N == 1)
             return cell(0, 0);
@@ -206,19 +206,18 @@ public:
         return det;
     }
 
-    Matrix invert()
+    Matrix invert() const
     {
         Matrix ret;
         float det = determinant();
 
-        for(int x = 0; x < N; x++)
+        for (int i = 0; i < N; i++)
         {
-            for(int y = 0; y < N; y++)
+            for (int j = 0; j < N; j++)
             {
-                Matrix<N-1> minor = minor_matrix(y, x);
-                ret(x, y) = det*minor.determinant();
-                if( (x+y)%2 == 1)
-                    ret(x, y) = -ret(x, y);
+                ret(i, j) = minor_matrix(j, i).determinant() / det;
+                if ((i+j)%2 == 1)
+                    ret(i, j) = -ret(i, j);
             }
         }
         return ret;
