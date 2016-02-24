@@ -172,24 +172,22 @@ public:
         return ret;
     }
 
-    Matrix<N-1> minor_matrix(int row, int col)
+    Matrix<N-1> minor_matrix(int row, int col) const
     {
-        int colCount = 0, rowCount = 0;
         Matrix<N-1> ret;
-        for(int i = 0; i < N; i++ )
+        for (int i = 0, im = 0; i < N; i++)
         {
-            if( i != row )
+            if (i == row)
+                continue;
+
+            for (int j = 0, jm = 0; j < N; j++)
             {
-                for(int j = 0; j < N; j++ )
+                if (j != col)
                 {
-                    if( j != col )
-                    {
-                        ret(rowCount, colCount) = cell(i, j);
-                        colCount++;
-                    }
+                    ret(im, jm++) = cell(i, j);
                 }
-                rowCount++;
             }
+            im++;
         }
         return ret;
     }
