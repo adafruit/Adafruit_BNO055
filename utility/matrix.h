@@ -59,41 +59,42 @@ public:
         {
             _cell_data[ij] = m._cell_data[ij];
         }
+        return *this;
     }
 
-    Vector<N> row_to_vector(int y)
+    Vector<N> row_to_vector(int i) const
     {
         Vector<N> ret;
-        for(int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
         {
-            ret[i] = _cell[y*N+i];
+            ret[j] = cell(i, j);
         }
         return ret;
     }
 
-    Vector<N> col_to_vector(int x)
+    Vector<N> col_to_vector(int j) const
     {
         Vector<N> ret;
-        for(int i = 0; i < N; i++)
+        for (int i = 0; i < N; i++)
         {
-            ret[i] = _cell[i*N+x];
+            ret[i] = cell(i, j);
         }
         return ret;
     }
 
-    void vector_to_row(Vector<N> v, int row)
+    void vector_to_row(const Vector<N>& v, int i)
     {
-        for(int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
         {
-            cell(row, i) = v(i);
+            cell(i, j) = v[j];
         }
     }
 
-    void vector_to_col(Vector<N> v, int col)
+    void vector_to_col(const Vector<N>& v, int j)
     {
-        for(int i = 0; i < N; i++)
+        for (int i = 0; i < N; i++)
         {
-            cell(i, col) = v(i);
+            cell(i, j) = v[i];
         }
     }
 
