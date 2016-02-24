@@ -202,7 +202,7 @@ public:
     Matrix invert() const
     {
         Matrix ret;
-        float det = determinant();
+        double det = determinant();
 
         for (int i = 0; i < N; i++)
         {
@@ -217,7 +217,7 @@ public:
     }
 
 private:
-    double  _cell_data[N*N];
+    double _cell_data[N*N];
 };
 
 
