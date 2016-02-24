@@ -36,16 +36,13 @@ template <uint8_t N> class Matrix
 public:
     Matrix()
     {
-        int r = sizeof(double)*N;
         _cell = &_cell_data[0];
-        memset(_cell, 0, r*r);
+        memset(_cell, 0, N*N*sizeof(double));
     }
 
     Matrix(const Matrix &v)
     {
-        int r = sizeof(double)*N;
         _cell = &_cell_data[0];
-        memset(_cell, 0, r*r);
         for (int x = 0; x < N; x++ )
         {
             for(int y = 0; y < N; y++)
