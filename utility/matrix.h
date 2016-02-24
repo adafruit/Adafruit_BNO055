@@ -40,15 +40,12 @@ public:
         memset(_cell, 0, N*N*sizeof(double));
     }
 
-    Matrix(const Matrix &v)
+    Matrix(const Matrix &m)
     {
         _cell = &_cell_data[0];
-        for (int x = 0; x < N; x++ )
+        for (int ij = 0; ij < N*N; ++ij)
         {
-            for(int y = 0; y < N; y++)
-            {
-                _cell[x*N+y] = v._cell[x*N+y];
-            }
+            _cell_data[ij] = m._cell_data[ij];
         }
     }
 
@@ -56,14 +53,11 @@ public:
     {
     }
 
-    void operator = (Matrix m)
+    Matrix& operator=(const Matrix& m)
     {
-        for(int x = 0; x < N; x++)
+        for (int ij = 0; ij < N*N; ++ij)
         {
-            for(int y = 0; y < N; y++)
-            {
-                cell(x, y) = m.cell(x, y);
-            }
+            _cell_data[ij] = m._cell_data[ij];
         }
     }
 
