@@ -32,8 +32,6 @@
 namespace imu
 {
 
-
-
 class Quaternion
 {
 public:
@@ -105,15 +103,9 @@ public:
         *this = this->scale(1/mag);
     }
 
-
-    Quaternion conjugate() const
+    const Quaternion conjugate() const
     {
-        Quaternion q;
-        q.w() = _w;
-        q.x() = -_x;
-        q.y() = -_y;
-        q.z() = -_z;
-        return q;
+        return Quaternion(_w, -_x, -_y, -_z);
     }
 
     void fromAxisAngle(Vector<3> axis, double theta)
@@ -251,71 +243,45 @@ public:
     }
 
 
-    Quaternion operator * (Quaternion q) const
+    const Quaternion operator*(const Quaternion& q) const
     {
-        Quaternion ret;
-        ret._w = ((_w*q._w) - (_x*q._x) - (_y*q._y) - (_z*q._z));
-        ret._x = ((_w*q._x) + (_x*q._w) + (_y*q._z) - (_z*q._y));
-        ret._y = ((_w*q._y) - (_x*q._z) + (_y*q._w) + (_z*q._x));
-        ret._z = ((_w*q._z) + (_x*q._y) - (_y*q._x) + (_z*q._w));
-        return ret;
+        return Quaternion(
+            _w*q._w - _x*q._x - _y*q._y - _z*q._z,
+            _w*q._x + _x*q._w + _y*q._z - _z*q._y,
+            _w*q._y - _x*q._z + _y*q._w + _z*q._x,
+            _w*q._z + _x*q._y - _y*q._x + _z*q._w
+        );
     }
 
-    Quaternion operator + (Quaternion q) const
+    const Quaternion operator+(const Quaternion& q) const
     {
-        Quaternion ret;
-        ret._w = _w + q._w;
-        ret._x = _x + q._x;
-        ret._y = _y + q._y;
-        ret._z = _z + q._z;
-        return ret;
+        return Quaternion(_w + q._w, _x + q._x, _y + q._y, _z + q._z);
     }
 
-    Quaternion operator - (Quaternion q) const
+    const Quaternion operator-(const Quaternion& q) const
     {
-        Quaternion ret;
-        ret._w = _w - q._w;
-        ret._x = _x - q._x;
-        ret._y = _y - q._y;
-        ret._z = _z - q._z;
-        return ret;
+        return Quaternion(_w - q._w, _x - q._x, _y - q._y, _z - q._z);
     }
 
-    Quaternion operator / (float scalar) const
+    const Quaternion operator/(double scalar) const
     {
-        Quaternion ret;
-        ret._w = this->_w/scalar;
-        ret._x = this->_x/scalar;
-        ret._y = this->_y/scalar;
-        ret._z = this->_z/scalar;
-        return ret;
+        return Quaternion(_w / scalar, _x / scalar, _y / scalar, _z / scalar);
     }
 
-    Quaternion operator * (float scalar) const
+    const Quaternion operator*(double scalar) const
     {
-        Quaternion ret;
-        ret._w = this->_w*scalar;
-        ret._x = this->_x*scalar;
-        ret._y = this->_y*scalar;
-        ret._z = this->_z*scalar;
-        return ret;
+        return scale(scalar);
     }
 
-    Quaternion scale(double scalar) const
+    const Quaternion scale(double scalar) const
     {
-        Quaternion ret;
-        ret._w = this->_w*scalar;
-        ret._x = this->_x*scalar;
-        ret._y = this->_y*scalar;
-        ret._z = this->_z*scalar;
-        return ret;
+        return Quaternion(_w * scalar, _x * scalar, _y * scalar, _z * scalar);
     }
 
 private:
     double _w, _x, _y, _z;
 };
 
-
-};
+} // namespace
 
 #endif
