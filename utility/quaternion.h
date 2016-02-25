@@ -157,17 +157,17 @@ public:
     Matrix<3> toMatrix() const
     {
         Matrix<3> ret;
-        ret.cell(0, 0) = 1-(2*(_y*_y))-(2*(_z*_z));
-        ret.cell(0, 1) = (2*_x*_y)-(2*_w*_z);
-        ret.cell(0, 2) = (2*_x*_z)+(2*_w*_y);
+        ret.cell(0, 0) = 1 - 2*_y*_y - 2*_z*_z;
+        ret.cell(0, 1) = 2*_x*_y - 2*_w*_z;
+        ret.cell(0, 2) = 2*_x*_z + 2*_w*_y;
 
-        ret.cell(1, 0) = (2*_x*_y)+(2*_w*_z);
-        ret.cell(1, 1) = 1-(2*(_x*_x))-(2*(_z*_z));
-        ret.cell(1, 2) = (2*(_y*_z))-(2*(_w*_x));
+        ret.cell(1, 0) = 2*_x*_y + 2*_w*_z;
+        ret.cell(1, 1) = 1 - 2*_x*_x - 2*_z*_z;
+        ret.cell(1, 2) = 2*_y*_z - 2*_w*_x;
 
-        ret.cell(2, 0) = (2*(_x*_z))-(2*_w*_y);
-        ret.cell(2, 1) = (2*_y*_z)+(2*_w*_x);
-        ret.cell(2, 2) = 1-(2*(_x*_x))-(2*(_y*_y));
+        ret.cell(2, 0) = 2*_x*_z - 2*_w*_y;
+        ret.cell(2, 1) = 2*_y*_z + 2*_w*_x;
+        ret.cell(2, 2) = 1 - 2*_x*_x - 2*_y*_y;
         return ret;
     }
 
