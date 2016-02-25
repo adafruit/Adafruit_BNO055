@@ -35,27 +35,13 @@ namespace imu
 class Quaternion
 {
 public:
-    Quaternion()
-    {
-        _w = 1.0;
-        _x = _y = _z = 0.0;
-    }
+    Quaternion(): _w(1.0), _x(0.0), _y(0.0), _z(0.0) {}
 
-    Quaternion(double iw, double ix, double iy, double iz)
-    {
-        _w = iw;
-        _x = ix;
-        _y = iy;
-        _z = iz;
-    }
+    Quaternion(double w, double x, double y, double z):
+        _w(w), _x(x), _y(y), _z(z) {}
 
-    Quaternion(double w, Vector<3> vec)
-    {
-        _w = w;
-        _x = vec.x();
-        _y = vec.y();
-        _z = vec.z();
-    }
+    Quaternion(double w, Vector<3> vec):
+        _w(w), _x(vec.x()), _y(vec.y()), _z(vec.z()) {}
 
     double& w()
     {
@@ -243,7 +229,7 @@ public:
     }
 
 
-    const Quaternion operator*(const Quaternion& q) const
+    Quaternion operator*(const Quaternion& q) const
     {
         return Quaternion(
             _w*q._w - _x*q._x - _y*q._y - _z*q._z,
@@ -253,27 +239,27 @@ public:
         );
     }
 
-    const Quaternion operator+(const Quaternion& q) const
+    Quaternion operator+(const Quaternion& q) const
     {
         return Quaternion(_w + q._w, _x + q._x, _y + q._y, _z + q._z);
     }
 
-    const Quaternion operator-(const Quaternion& q) const
+    Quaternion operator-(const Quaternion& q) const
     {
         return Quaternion(_w - q._w, _x - q._x, _y - q._y, _z - q._z);
     }
 
-    const Quaternion operator/(double scalar) const
+    Quaternion operator/(double scalar) const
     {
         return Quaternion(_w / scalar, _x / scalar, _y / scalar, _z / scalar);
     }
 
-    const Quaternion operator*(double scalar) const
+    Quaternion operator*(double scalar) const
     {
         return scale(scalar);
     }
 
-    const Quaternion scale(double scalar) const
+    Quaternion scale(double scalar) const
     {
         return Quaternion(_w * scalar, _x * scalar, _y * scalar, _z * scalar);
     }
