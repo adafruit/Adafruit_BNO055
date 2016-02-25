@@ -142,10 +142,10 @@ public:
         }
     }
 
-    void toAxisAngle(Vector<3>& axis, float& angle) const
+    void toAxisAngle(Vector<3>& axis, double& angle) const
     {
-        float sqw = sqrt(1-_w*_w);
-        if(sqw == 0) //it's a singularity and divide by zero, avoid
+        double sqw = sqrt(1-_w*_w);
+        if (sqw == 0) //it's a singularity and divide by zero, avoid
             return;
 
         angle = 2 * acos(_w);
@@ -198,7 +198,7 @@ public:
         return ret;
     }
 
-    Vector<3> toAngularVelocity(float dt) const
+    Vector<3> toAngularVelocity(double dt) const
     {
         Vector<3> ret;
         Quaternion one(1.0, 0.0, 0.0, 0.0);
