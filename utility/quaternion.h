@@ -79,8 +79,7 @@ public:
 
     double magnitude() const
     {
-        double res = (_w*_w) + (_x*_x) + (_y*_y) + (_z*_z);
-        return sqrt(res);
+        return sqrt(_w*_w + _x*_x + _y*_y + _z*_z);
     }
 
     void normalize()
@@ -89,12 +88,12 @@ public:
         *this = this->scale(1/mag);
     }
 
-    const Quaternion conjugate() const
+    Quaternion conjugate() const
     {
         return Quaternion(_w, -_x, -_y, -_z);
     }
 
-    void fromAxisAngle(Vector<3> axis, double theta)
+    void fromAxisAngle(const Vector<3>& axis, double theta)
     {
         _w = cos(theta/2);
         //only need to calculate sine of half theta once
@@ -214,18 +213,16 @@ public:
         return ret;
     }
 
-    Vector<3> rotateVector(Vector<2> v) const
+    Vector<3> rotateVector(const Vector<2>& v) const
     {
-        Vector<3> ret(v.x(), v.y(), 0.0);
-        return rotateVector(ret);
+        return rotateVector(Vector<3>(v.x(), v.y()));
     }
 
-    Vector<3> rotateVector(Vector<3> v) const
+    Vector<3> rotateVector(const Vector<3>& v) const
     {
-        Vector<3> qv(this->x(), this->y(), this->z());
-        Vector<3> t;
-        t = qv.cross(v) * 2.0;
-        return v + (t * _w) + qv.cross(t);
+        Vector<3> qv(_x, _y, _z);
+        Vector<3> t = qv.cross(v) * 2.0;
+        return v + t*_w + qv.cross(t);
     }
 
 
