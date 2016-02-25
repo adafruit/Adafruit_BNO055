@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "vector.h"
+#include "matrix.h"
 
 
 namespace imu
