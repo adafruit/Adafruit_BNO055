@@ -216,6 +216,14 @@ public:
         return ret;
     }
 
+    double trace() const
+    {
+        double tr = 0.0;
+        for (int i = 0; i < N; ++i)
+            tr += cell(i, i);
+        return tr;
+    }
+
 private:
     double _cell_data[N*N];
 };

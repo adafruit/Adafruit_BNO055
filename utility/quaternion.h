@@ -126,11 +126,11 @@ public:
         _z = axis.z() * sht;
     }
 
-    void fromMatrix(Matrix<3> m)
+    void fromMatrix(const Matrix<3>& m)
     {
-        float tr = m(0, 0) + m(1, 1) + m(2, 2);
+        double tr = m.trace();
 
-        float S = 0.0;
+        double S;
         if (tr > 0)
         {
             S = sqrt(tr+1.0) * 2;
@@ -139,7 +139,7 @@ public:
             _y = (m(0, 2) - m(2, 0)) / S;
             _z = (m(1, 0) - m(0, 1)) / S;
         }
-        else if ((m(0, 0) < m(1, 1))&(m(0, 0) < m(2, 2)))
+        else if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2))
         {
             S = sqrt(1.0 + m(0, 0) - m(1, 1) - m(2, 2)) * 2;
             _w = (m(2, 1) - m(1, 2)) / S;
@@ -147,7 +147,7 @@ public:
             _y = (m(0, 1) + m(1, 0)) / S;
             _z = (m(0, 2) + m(2, 0)) / S;
         }
-        else if (m(1, 1) < m(2, 2))
+        else if (m(1, 1) > m(2, 2))
         {
             S = sqrt(1.0 + m(1, 1) - m(0, 0) - m(2, 2)) * 2;
             _w = (m(0, 2) - m(2, 0)) / S;
