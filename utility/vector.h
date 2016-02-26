@@ -81,9 +81,8 @@ public:
     double magnitude() const
     {
         double res = 0;
-        int i;
-        for(i = 0; i < N; i++)
-            res += (p_vec[i] * p_vec[i]);
+        for (int i = 0; i < N; i++)
+            res += p_vec[i] * p_vec[i];
 
         if(isnan(res))
             return 0;
@@ -106,8 +105,7 @@ public:
     double dot(const Vector& v) const
     {
         double ret = 0;
-        int i;
-        for(i = 0; i < N; i++)
+        for (int i = 0; i < N; i++)
             ret += p_vec[i] * v.p_vec[i];
 
         return ret;
@@ -213,7 +211,7 @@ public:
 
 
 private:
-    double  p_vec[N];
+    double p_vec[N];
 };
 
 
