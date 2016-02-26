@@ -95,7 +95,7 @@ public:
     void normalize()
     {
         double mag = magnitude();
-        if(abs(mag) <= 0.0001)
+        if (fabs(mag) <= 0.0001)
             return;
 
         int i;
