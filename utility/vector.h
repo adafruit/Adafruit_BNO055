@@ -78,7 +78,7 @@ public:
 
     uint8_t n() { return N; }
 
-    double magnitude()
+    double magnitude() const
     {
         double res = 0;
         int i;
@@ -103,7 +103,7 @@ public:
             p_vec[i] = p_vec[i]/mag;
     }
 
-    double dot(Vector v)
+    double dot(const Vector& v) const
     {
         double ret = 0;
         int i;
@@ -136,7 +136,7 @@ public:
         return ret;
     }
 
-    Vector operator = (Vector v)
+    Vector& operator=(const Vector& v)
     {
         for (int x = 0; x < N; x++ )
             p_vec[x] = v.p_vec[x];
@@ -163,7 +163,7 @@ public:
         return p_vec[n];
     }
 
-    Vector operator + (Vector v) const
+    Vector operator+(const Vector& v) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
@@ -171,7 +171,7 @@ public:
         return ret;
     }
 
-    Vector operator - (Vector v) const
+    Vector operator-(const Vector& v) const
     {
         Vector ret;
         for(int i = 0; i < N; i++)
