@@ -114,20 +114,12 @@ public:
         return ret;
     }
 
-    Vector cross(Vector v)
-    {
-        Vector ret;
-
-        // The cross product is only valid for vectors with 3 dimensions,
-        // with the exception of higher dimensional stuff that is beyond the intended scope of this library
-        if(N != 3)
-            return ret;
-
-        ret.p_vec[0] = (p_vec[1] * v.p_vec[2]) - (p_vec[2] * v.p_vec[1]);
-        ret.p_vec[1] = (p_vec[2] * v.p_vec[0]) - (p_vec[0] * v.p_vec[2]);
-        ret.p_vec[2] = (p_vec[0] * v.p_vec[1]) - (p_vec[1] * v.p_vec[0]);
-        return ret;
-    }
+    // The cross product is only valid for vectors with 3 dimensions,
+    // with the exception of higher dimensional stuff that is beyond
+    // the intended scope of this library.
+    // Only a definition for N==3 is given below this class, using
+    // cross() with another value for N will result in a link error.
+    Vector cross(const Vector& v) const;
 
     Vector scale(double scalar) const
     {
@@ -226,6 +218,16 @@ private:
 };
 
 
-};
+template <>
+inline Vector<3> Vector<3>::cross(const Vector& v) const
+{
+    return Vector(
+        p_vec[1] * v.p_vec[2] - p_vec[2] * v.p_vec[1],
+        p_vec[2] * v.p_vec[0] - p_vec[0] * v.p_vec[2],
+        p_vec[0] * v.p_vec[1] - p_vec[1] * v.p_vec[0]
+    );
+}
+
+} // namespace
 
 #endif
