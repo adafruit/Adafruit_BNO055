@@ -26,14 +26,7 @@
  #include "WProgram.h"
 #endif
 
-#ifdef __AVR_ATtiny85__
- #include <TinyWireM.h>
- #define Wire TinyWireM
-#else
- #include <Wire.h>
-#endif
-
-#include <Adafruit_Sensor.h>
+#include <Sensor.h>
 #include <utility/imumaths.h>
 
 #define BNO055_ADDRESS_A (0x28)
@@ -58,7 +51,7 @@ typedef struct
     uint16_t mag_radius;
 } adafruit_bno055_offsets_t;
 
-class Adafruit_BNO055 : public Adafruit_Sensor
+class Adafruit_BNO055 : public Sensor
 {
   public:
     typedef enum
@@ -300,7 +293,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     imu::Quaternion getQuat   ( void );
     int8_t          getTemp   ( void );
 
-    /* Adafruit_Sensor implementation */
+    /* Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
     void  getSensor ( sensor_t* );
 
