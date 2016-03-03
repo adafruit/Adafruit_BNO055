@@ -55,15 +55,36 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address)
 bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 {
   /* Enable I2C */
-  Wire.begin();
+  
+  Serial.print("Starting I2C: SDA: ");
+  Serial.print(_sda);
+  Serial.print(" SCL: ");
+  Serial.print(_scl);
+  Serial.println("");
+  Serial.flush();
+  
+  Wire.begin(_sda,_scl);
 
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if(id != BNO055_ID)
   {
+    Serial.print("Got wrong ID. Expected: ");
+    Serial.print(BNO055_ID);
+    Serial.print(" Got : ");
+    Serial.print(id);
+    Serial.println(". rebooting");
+    Serial.flush();
+
     delay(1000); // hold on for boot
     id = read8(BNO055_CHIP_ID_ADDR);
     if(id != BNO055_ID) {
+      Serial.print("Got wrong ID again. Expected: ");
+      Serial.print(BNO055_ID);
+      Serial.print(" Got : ");
+      Serial.print(id);
+      Serial.println(". returning false");
+      Serial.flush();
       return false;  // still not? ok bail
     }
   }
@@ -112,6 +133,12 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   return true;
 }
 
+#ifdef ESP8266
+void Adafruit_BNO055::setPorts            ( int sda, int scl ) {
+  _sda = sda;
+  _scl = scl;
+}
+#endif
 /**************************************************************************/
 /*!
     @brief  Puts the chip in the specified operating mode
