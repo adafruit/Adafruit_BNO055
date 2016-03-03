@@ -55,36 +55,19 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address)
 bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 {
   /* Enable I2C */
-  
-  Serial.print("Starting I2C: SDA: ");
-  Serial.print(_sda);
-  Serial.print(" SCL: ");
-  Serial.print(_scl);
-  Serial.println("");
-  Serial.flush();
-  
+#ifdef ESP8266
   Wire.begin(_sda,_scl);
+#else
+  Wire.begin();
+#endif
 
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if(id != BNO055_ID)
   {
-    Serial.print("Got wrong ID. Expected: ");
-    Serial.print(BNO055_ID);
-    Serial.print(" Got : ");
-    Serial.print(id);
-    Serial.println(". rebooting");
-    Serial.flush();
-
     delay(1000); // hold on for boot
     id = read8(BNO055_CHIP_ID_ADDR);
     if(id != BNO055_ID) {
-      Serial.print("Got wrong ID again. Expected: ");
-      Serial.print(BNO055_ID);
-      Serial.print(" Got : ");
-      Serial.print(id);
-      Serial.println(". returning false");
-      Serial.flush();
       return false;  // still not? ok bail
     }
   }
