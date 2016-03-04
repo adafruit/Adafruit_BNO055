@@ -84,20 +84,17 @@ public:
         for (int i = 0; i < N; i++)
             res += p_vec[i] * p_vec[i];
 
-        if(isnan(res))
-            return 0;
         return sqrt(res);
     }
 
     void normalize()
     {
         double mag = magnitude();
-        if (fabs(mag) <= 0.0001)
+        if (isnan(mag) || mag == 0.0)
             return;
 
-        int i;
-        for(i = 0; i < N; i++)
-            p_vec[i] = p_vec[i]/mag;
+        for (int i = 0; i < N; i++)
+            p_vec[i] /= mag;
     }
 
     double dot(const Vector& v) const
