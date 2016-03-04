@@ -86,9 +86,7 @@ public:
 
         if(isnan(res))
             return 0;
-        if((fabs(res-1)) >= 0.000001) // Avoid a sqrt if possible.
-            return sqrt(res);
-        return 1;
+        return sqrt(res);
     }
 
     void normalize()
