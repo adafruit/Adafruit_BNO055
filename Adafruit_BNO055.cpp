@@ -59,11 +59,11 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 #ifndef ESP8266
   Wire.begin();
 #else
+  Wire.begin(_sda,_scl);
+  
   if ( _clockStretchLimit != 0 ) {
     Wire.setClockStretchLimit(_clockStretchLimit);
   }
-  
-  Wire.begin(_sda,_scl);
 #endif
 
   /* Make sure we have the right device */
