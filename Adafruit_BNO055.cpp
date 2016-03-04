@@ -55,10 +55,15 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address)
 bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 {
   /* Enable I2C */
-#ifdef ESP8266
-  Wire.begin(_sda,_scl);
-#else
+  
+#ifndef ESP8266
   Wire.begin();
+#else
+  if ( _clockStretchLimit != 0 ) {
+    Wire.setClockStretchLimit(_clockStretchLimit);
+  }
+  
+  Wire.begin(_sda,_scl);
 #endif
 
   /* Make sure we have the right device */
@@ -117,9 +122,12 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 }
 
 #ifdef ESP8266
-void Adafruit_BNO055::setPorts            ( int sda, int scl ) {
+void Adafruit_BNO055::setPorts             ( int sda, int scl ) {
   _sda = sda;
   _scl = scl;
+}
+void  Adafruit_BNO055::setClockStretchLimit( int clockStretchLimit ) {
+  _clockStretchLimit = clockStretchLimit;
 }
 #endif
 /**************************************************************************/
