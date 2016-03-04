@@ -287,7 +287,8 @@ class Adafruit_BNO055 : public Adafruit_Sensor
 #endif
     bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
 #ifdef ESP8266
-    void  setPorts            ( int sda, int scl );
+    void  setPorts            ( int sda, int scl      );
+    void  setClockStretchLimit( int clockStretchLimit );
 #endif
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
@@ -320,8 +321,9 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     bool  write8  ( adafruit_bno055_reg_t, byte value );
 
 #ifdef ESP8266
-    int     _sda =  2;
-    int     _scl = 14;
+    int     _sda               =    2;
+    int     _scl               =   14;
+    int     _clockStretchLimit = 8533;
 #endif
     uint8_t _address;
     int32_t _sensorID;
