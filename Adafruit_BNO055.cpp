@@ -57,6 +57,11 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   /* Enable I2C */
   Wire.begin();
 
+  // BNO055 clock stretches for 500us or more!
+#ifdef ESP8266
+  Wire.setClockStretchLimit(1000); // Allow for 1000us of clock stretching
+#endif
+
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if(id != BNO055_ID)
