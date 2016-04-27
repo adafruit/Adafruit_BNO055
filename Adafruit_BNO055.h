@@ -279,7 +279,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
       VECTOR_GRAVITY       = BNO055_GRAVITY_DATA_X_LSB_ADDR
     } adafruit_vector_type_t;
 
-#ifdef ARDUINO_SAMD_ZERO
+#if defined (ARDUINO_SAMD_ZERO) && ! (ARDUINO_SAMD_FEATHER_M0)
 #error "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete this line."
     Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_B );
 #else
