@@ -71,9 +71,12 @@ void setup(void)
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
-
+   
   delay(1000);
 
+  /* Use external crystal for better accuracy */
+  bno.setExtCrystalUse(true);
+   
   /* Display some basic information on this sensor */
   displaySensorDetails();
 }
