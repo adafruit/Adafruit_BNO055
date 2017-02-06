@@ -468,33 +468,7 @@ void Adafruit_BNO055::setSensorOffsets(const uint8_t* calibData)
     setMode(OPERATION_MODE_CONFIG);
     delay(25);
 
-    /* A writeLen() would make this much cleaner */
-    write8(ACCEL_OFFSET_X_LSB_ADDR, calibData[0]);
-    write8(ACCEL_OFFSET_X_MSB_ADDR, calibData[1]);
-    write8(ACCEL_OFFSET_Y_LSB_ADDR, calibData[2]);
-    write8(ACCEL_OFFSET_Y_MSB_ADDR, calibData[3]);
-    write8(ACCEL_OFFSET_Z_LSB_ADDR, calibData[4]);
-    write8(ACCEL_OFFSET_Z_MSB_ADDR, calibData[5]);
-
-    write8(GYRO_OFFSET_X_LSB_ADDR, calibData[6]);
-    write8(GYRO_OFFSET_X_MSB_ADDR, calibData[7]);
-    write8(GYRO_OFFSET_Y_LSB_ADDR, calibData[8]);
-    write8(GYRO_OFFSET_Y_MSB_ADDR, calibData[9]);
-    write8(GYRO_OFFSET_Z_LSB_ADDR, calibData[10]);
-    write8(GYRO_OFFSET_Z_MSB_ADDR, calibData[11]);
-
-    write8(MAG_OFFSET_X_LSB_ADDR, calibData[12]);
-    write8(MAG_OFFSET_X_MSB_ADDR, calibData[13]);
-    write8(MAG_OFFSET_Y_LSB_ADDR, calibData[14]);
-    write8(MAG_OFFSET_Y_MSB_ADDR, calibData[15]);
-    write8(MAG_OFFSET_Z_LSB_ADDR, calibData[16]);
-    write8(MAG_OFFSET_Z_MSB_ADDR, calibData[17]);
-
-    write8(ACCEL_RADIUS_LSB_ADDR, calibData[18]);
-    write8(ACCEL_RADIUS_MSB_ADDR, calibData[19]);
-
-    write8(MAG_RADIUS_LSB_ADDR, calibData[20]);
-    write8(MAG_RADIUS_MSB_ADDR, calibData[21]);
+    writeLen(ACCEL_OFFSET_X_LSB_ADDR, calibData, NUM_BNO055_OFFSET_REGISTERS);
 
     setMode(lastMode);
 }
@@ -628,4 +602,34 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
 
   /* ToDo: Check for errors! */
   return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Writes a buffer of 8 bit values over I2C
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::writeLen(adafruit_bno055_reg_t reg, const uint8_t * buffer, uint8_t len)
+{
+
+  size_t result = 0;
+  bool no_error = true;
+
+  Wire.beginTransmission(_address);
+  #if ARDUINO >= 100
+    Wire.write((uint8_t)reg);
+    result = Wire.write(buffer, len);
+
+    if ((uint8_t)result != len) {
+      no_error = false;
+    }
+
+  #else
+    Wire.send(reg);
+    // Not error-checking send() as its return type is void.
+    Wire.send(buffer, len);
+  #endif
+  Wire.endTransmission();
+
+  return no_error;
 }
