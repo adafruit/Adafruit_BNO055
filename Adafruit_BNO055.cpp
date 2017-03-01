@@ -107,7 +107,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   write8(BNO055_AXIS_MAP_SIGN_ADDR, REMAP_SIGN_P2); // P0-P7, Default is P1
   delay(10);
   */
-  
+
   write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
@@ -128,6 +128,43 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode)
   write8(BNO055_OPR_MODE_ADDR, _mode);
   delay(30);
 }
+
+/**************************************************************************/
+/*!
+    @brief  Changes the chip's axis remap
+*/
+/**************************************************************************/
+void Adafruit_BNO055::setAxisRemap( adafruit_bno055_axis_remap_config_t remapcode )
+{
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, remapcode);
+  delay(10);
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Changes the chip's axis signs
+*/
+/**************************************************************************/
+void Adafruit_BNO055::setAxisSign( adafruit_bno055_axis_remap_sign_t remapsign )
+{
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  write8(BNO055_AXIS_MAP_SIGN_ADDR, remapsign);
+  delay(10);
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+}
+
 
 /**************************************************************************/
 /*!

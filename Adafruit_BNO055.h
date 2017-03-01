@@ -1,4 +1,4 @@
-/***************************************************************************
+z/***************************************************************************
   This is a library for the BNO055 orientation sensor
 
   Designed specifically to work with the Adafruit BNO055 Breakout.
@@ -287,6 +287,8 @@ class Adafruit_BNO055 : public Adafruit_Sensor
 #endif
     bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
     void  setMode             ( adafruit_bno055_opmode_t mode );
+    void  setAxisRemap        ( adafruit_bno055_axis_remap_config_t remapcode );
+    void  setAxisSign         ( adafruit_bno055_axis_remap_sign_t remapsign );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
