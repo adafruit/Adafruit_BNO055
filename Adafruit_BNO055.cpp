@@ -586,6 +586,171 @@ bool Adafruit_BNO055::isFullyCalibrated(void)
     return true;
 }
 
+/**************************************************************************/
+/*!
+@brief  Enables interrupt and links it to the INT pin
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, std::string flags )
+{
+  // initialise flags
+  int X_HG_EN = 0; int Y_HG_EN = 0; int Z_HG_EN = 0;
+  if (!flags.compare("x")){
+
+  }
+
+  adafruit_bno055_opmode_t lastMode = _mode;
+  setMode(OPERATION_MODE_CONFIG); // set to config and allow settings to be changed
+  delay(25);
+
+  write8(BNO055_PAGE_ID_ADDR, 1); // set access to the second register map
+  delay(25);
+
+  // clear INT_EN before writing to it
+  bool status = write8(BNO055_INTR_EN_ADDR, (int8_t)((0 << 7) | (0 << 6) | (0 << 5) | (0 << 3) | (0 << 2)));
+
+  // write to INT_EN 0x10 with 7, 6, 5, 3 or 2 to enable
+  status = write8(BNO055_INTR_EN_ADDR, (1 << int_en_code));
+
+  /*
+  uint8_t int_en_code = (0 << 7) | // Accelerometer no-motion/slow-motion enable
+                    (0 << 6) | // Accelerometer any-motion enable
+                    (0 << 5) | // Accelerometer high-g enable
+                    (1 << 3) | // Gyroscope high rate enable
+                    (0 << 2);  // Gyroscope any-motion enable
+  */
+
+  // clear INT_MSK before writing to it
+  status = write8(BNO055_INTR_MSK_ADDR, (int8_t)((0 << 7) | (0 << 6) | (0 << 5) | (0 << 3) | (0 << 2)));
+
+  // write to INT_MSK 0x0F with 7, 6, 5, 3 or 2 to link to INT pin
+  status = write8(BNO055_INTR_MSK_ADDR, (1 << int_en_code));
+
+  /*
+  uint8_t int_en_code = (0 << 7) | // Accelerometer no-motion/slow-motion on INT
+                    (0 << 6) | // Accelerometer any-motion on INT
+                    (0 << 5) | // Accelerometer high-g on INT
+                    (1 << 3) | // Gyroscope high rate on INT
+                    (0 << 2);  // Gyroscope any-motion on INT
+  */
+
+// TODO: Add flags to the function to allow deviation from default values!
+
+  switch(int_en_code){
+
+    case ACC_NM:
+      write8(BNO055_INTR_ACCEL_NM_SETT, (0 << 0)); // this is setting whether or not slow or no motion is selected
+      write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
+    break;
+
+    case ACC_SM:
+      write8(BNO055_INTR_ACCEL_NM_SETT, (1 << 0)); // this is setting whether or not slow or no motion is selected
+      write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
+    break;
+
+    case ACC_AM:
+      write8(BNO055_INTR_ACCEL_AM_THRES, (1 << threshold)); // also dependent on ACC_CONFIG
+    break;
+
+    case ACC_HIGH_G:
+      // set enables of axes
+      write8(BNO055_INTR_ACCEL_SETT, (int8_t)((X_HG_EN << 5) | (Y_HG_EN << 6) | (Z_HG_EN << 7)));
+
+      // set duration of event required
+      if (duration < '256' && duration > '0'){
+        write8(BNO055_INTR_ACCEL_HG_DUR, duration); // literally write the value into the register
+      } else {
+        Serial.println("Duration value higher than 255!");
+      }
+
+      // set threshold of event required
+      if (threshold < '256' && threshold > '0'){
+        write8(BNO055_INTR_ACCEL_HG_THRES, threshold); // write the threshold value into the register
+      } else {
+        Serial.println("Threshold value higher than 255!");
+      }
+    break;
+
+    // TODO: currently enables EVERY axis indiscriminately
+    // TODO: selects only filtered data, should this register be cleared beforehand?
+
+    case GYR_HIGH_RATE:
+    // set GYR_INT_SET bit 7 and 3:5
+      write8(BNO055_INTR_GYR_SETT, (int8_t)((0 << 7) | (1 << 5) | (1 << 4) | (1 << 3))); // selects filtered data for high-rate interrupt
+    // set threshold, hysteresis and duration for each axis
+    // TODO: specify values for durations!
+      write8(BNO055_INTR_GYR_HR_X_SET, int value);
+      write8(BNO055_INTR_GYR_DUR_X, int value);
+      write8(BNO055_INTR_GYR_HR_Y_SET, int value);
+      write8(BNO055_INTR_GYR_DUR_Y, int value);
+      write8(BNO055_INTR_GYR_HR_Z_SET, int value);
+      write8(BNO055_INTR_GYR_DUR_Z, int value);
+    break;
+    case GYRO_AM:
+    // set GYR_INT_SET bit 7 and GYR_INT_SET 3:5
+      write8(BNO055_INTR_GYR_SETT, (int8_t)((0 << 6) | (1 << 2) | (1 << 1) | (1 << 0)));
+    // set hysteresis threshold and duration for each axis
+      write8(BNO055_INTR_GYR_AM_THRES, threshold);
+    // TODO: this is set to a default awake duration of 32 samples and 12 slope samples (section 4.4.24)
+      write8(BNO055_INTR_GYR_AM_SET, ((1 << 3) | (0 << 2) | (1 << 1) | (0 << 0)));
+    break;
+
+/*  Interrupt setup parameters (section 4.4.8 to 4.4.24)
+    ACC_NM - set ACC_NM_THRES 0x15, ACC_NM_SET 0x16
+    ACC_AM - set ACC_AM_THRES 0x11
+    ACC_HIGH_G - set HG_*_AXIS 0x12, ACC_HG_DUR 0x13 and ACC_HG_THRES 0x14
+
+    GYR_HIGH_RATE
+    Filter Settings - set bit 7 GYR_INT_SET 0x17, bit 3:5 GYR_INT_SET 0x17
+    for X axis - set bit 5:6 GYR_HR_X_SET 0x18 hysteresis, bit 0:4 threshold
+    set bit 0:7 GYR_DUR_X 0x19 duration
+    for Y axis - set bit 5:6 GYR_HR_Y_SET 0x1A hysteresis, bit 0:4 threshold
+    set bit 0:7 GYR_DUR_Y 0x1B duration
+    for Z axis - set bit 5:6 GYR_HR_Z_SET 0x1C hysteresis, bit 0:4 threshold
+    set bit 0:7 GYR_DUR_Z 0x1D duration
+
+    GYRO_AM - set bit 6 GYR_INT_SET 0x17, bit 0:2 GYR_INT_SET 0x17
+    set bit 0:6 GYR_AM_THRES 0x1E threshold
+    set bit 2:3 GYR_AM_SET 0x1F awake duration, bit 0:1 slope samples
+*/
+
+  }
+
+  setMode(lastMode); // return to non-config mode
+
+  if (status > 0){
+    return false;
+  } else {
+    return true;
+  }
+
+}
+
+/**************************************************************************/
+/*!
+@brief  On interrupt reads the interrupt status register
+*/
+/**************************************************************************/
+int8_t Adafruit_BNO055::readIntStatus()
+{
+  setMode(OPERATION_MODE_CONFIG); // change to config to change page
+  delay(25);
+
+  write8(BNO055_PAGE_ID_ADDR, 0); // set access to the first register page
+  delay(25);
+  // read from INT_STA to determine the type of interrupt occurance
+  int8_t intstatus = read8(BNO055_INTR_STAT_ADDR);
+
+  /* Interrupt Status (see section 4.3.56)
+     ---------------------------------
+     0 = No Status
+     4 = Gyroscope any-motion interrupt
+     8 = Gyroscope high-rate interrupt
+     32 = Accelerometer any-motion interrupt
+     49 = Accelerometer no-motion/slow-motion interrupt */
+
+  return intstatus;
+}
 
 /***************************************************************************
  PRIVATE FUNCTIONS
@@ -596,7 +761,7 @@ bool Adafruit_BNO055::isFullyCalibrated(void)
     @brief  Writes an 8 bit value over I2C
 */
 /**************************************************************************/
-bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
+int8_t Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
 {
   Wire.beginTransmission(_address);
   #if ARDUINO >= 100
@@ -606,10 +771,9 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
     Wire.send(reg);
     Wire.send(value);
   #endif
-  Wire.endTransmission();
+  int8_t status = Wire.endTransmission();
 
-  /* ToDo: Check for error! */
-  return true;
+  return status;
 }
 
 /**************************************************************************/

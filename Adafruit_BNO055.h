@@ -1,4 +1,4 @@
-z/***************************************************************************
+/***************************************************************************
   This is a library for the BNO055 orientation sensor
 
   Designed specifically to work with the Adafruit BNO055 Breakout.
@@ -19,6 +19,9 @@ z/***************************************************************************
 
 #ifndef __ADAFRUIT_BNO055_H__
 #define __ADAFRUIT_BNO055_H__
+
+#include <iostream>
+#include <string>
 
 #if (ARDUINO >= 100)
  #include "Arduino.h"
@@ -139,6 +142,8 @@ class Adafruit_BNO055 : public Adafruit_Sensor
       /* Status registers */
       BNO055_CALIB_STAT_ADDR                                  = 0X35,
       BNO055_SELFTEST_RESULT_ADDR                             = 0X36,
+
+      /* Interrupt status register PAGE 0 */
       BNO055_INTR_STAT_ADDR                                   = 0X37,
 
       BNO055_SYS_CLK_STAT_ADDR                                = 0X38,
@@ -155,6 +160,25 @@ class Adafruit_BNO055 : public Adafruit_Sensor
 
       BNO055_SYS_TRIGGER_ADDR                                 = 0X3F,
       BNO055_TEMP_SOURCE_ADDR                                 = 0X40,
+
+      /* Interrupt config registers PAGE 1 */
+      BNO055_INTR_EN_ADDR                                     = 0x10,
+      BNO055_INTR_MSK_ADDR                                    = 0x0F,
+      BNO055_INTR_ACCEL_AM_THRES                              = 0x11,
+      BNO055_INTR_ACCEL_SETT                                  = 0x12,
+      BNO055_INTR_ACCEL_HG_DUR                                = 0x13,
+      BNO055_INTR_ACCEL_HG_THRES                              = 0x14,
+      BNO055_INTR_ACCEL_NM_THRES                              = 0x15,
+      BNO055_INTR_ACCEL_NM_SETT                               = 0x16,
+      BNO055_INTR_GYR_SETT                                    = 0x17,
+      BNO055_INTR_GYR_HR_X_SET                                = 0x18,
+      BNO055_INTR_GYR_DUR_X                                   = 0x19,
+      BNO055_INTR_GYR_HR_Y_SET                                = 0x1A,
+      BNO055_INTR_GYR_DUR_Y                                   = 0x1B,
+      BNO055_INTR_GYR_HR_Z_SET                                = 0x1C,
+      BNO055_INTR_GYR_DUR_Z                                   = 0x1D,
+      BNO055_INTR_GYR_AM_THRES                                = 0x1E,
+      BNO055_INTR_GYR_AM_SET                                  = 0x1F,
 
       /* Axis remap registers */
       BNO055_AXIS_MAP_CONFIG_ADDR                             = 0X41,
@@ -260,6 +284,16 @@ class Adafruit_BNO055 : public Adafruit_Sensor
       REMAP_SIGN_P7                                           = 0x05
     } adafruit_bno055_axis_remap_sign_t;
 
+    typedef enum
+    {
+      ACC_NM                                                  = 7,
+      ACC_SM                                                  = 7,
+      ACC_AM                                                  = 6, // default
+      ACC_HIGH_G                                              = 5,
+      GYR_HIGH_RATE                                           = 3,
+      GYRO_AM                                                 = 2
+    } adafruit_bno055_intr_en_t;
+
     typedef struct
     {
       uint8_t  accel_rev;
@@ -289,6 +323,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  setAxisRemap        ( adafruit_bno055_axis_remap_config_t remapcode );
     void  setAxisSign         ( adafruit_bno055_axis_remap_sign_t remapsign );
+    bool  enableMotionInt     ( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, std::string flags );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
@@ -301,6 +336,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
     imu::Quaternion getQuat   ( void );
     int8_t          getTemp   ( void );
+    int8_t readIntStatus     ( void );
 
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
@@ -316,7 +352,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
   private:
     byte  read8   ( adafruit_bno055_reg_t );
     bool  readLen ( adafruit_bno055_reg_t, byte* buffer, uint8_t len );
-    bool  write8  ( adafruit_bno055_reg_t, byte value );
+    int8_t  write8  ( adafruit_bno055_reg_t, byte value );
 
     uint8_t _address;
     int32_t _sensorID;
