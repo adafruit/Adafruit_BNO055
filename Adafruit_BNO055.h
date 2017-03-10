@@ -35,7 +35,6 @@
 
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
-#include <string>
 
 #define BNO055_ADDRESS_A (0x28)
 #define BNO055_ADDRESS_B (0x29)
@@ -321,7 +320,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  setAxisRemap        ( adafruit_bno055_axis_remap_config_t remapcode );
     void  setAxisSign         ( adafruit_bno055_axis_remap_sign_t remapsign );
-    bool  enableMotionInt     ( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, std::string flags );
+    bool  enableMotionInt     ( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, char flags[3] );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
