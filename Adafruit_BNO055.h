@@ -20,8 +20,6 @@
 #ifndef __ADAFRUIT_BNO055_H__
 #define __ADAFRUIT_BNO055_H__
 
-#include <iostream>
-
 #if (ARDUINO >= 100)
  #include "Arduino.h"
 #else
