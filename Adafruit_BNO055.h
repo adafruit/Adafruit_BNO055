@@ -35,7 +35,7 @@
 
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
-#include <string>
+#include <string.h>
 
 #define BNO055_ADDRESS_A (0x28)
 #define BNO055_ADDRESS_B (0x29)
