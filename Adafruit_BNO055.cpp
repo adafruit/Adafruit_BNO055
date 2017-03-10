@@ -636,15 +636,15 @@ bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, in
 
 // TODO: Add flags to the function to allow deviation from default values!
 
+  if (int_en_code == ACC_AM){
+    write8(BNO055_INTR_ACCEL_NM_SETT, (1 << 0)); // this is setting whether or not slow or no motion is selected
+    write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
+  }
+
   switch(int_en_code){
 
     case ACC_NM:
       write8(BNO055_INTR_ACCEL_NM_SETT, (0 << 0)); // this is setting whether or not slow or no motion is selected
-      write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
-    break;
-
-    case ACC_SM:
-      write8(BNO055_INTR_ACCEL_NM_SETT, (1 << 0)); // this is setting whether or not slow or no motion is selected
       write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
     break;
 
@@ -657,14 +657,14 @@ bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, in
       write8(BNO055_INTR_ACCEL_SETT, (int8_t)((X_HG_EN << 5) | (Y_HG_EN << 6) | (Z_HG_EN << 7)));
 
       // set duration of event required
-      if (duration < '256' && duration > '0'){
+      if ((duration < 256) && (duration > 0)){
         write8(BNO055_INTR_ACCEL_HG_DUR, duration); // literally write the value into the register
       } else {
         Serial.println("Duration value higher than 255!");
       }
 
       // set threshold of event required
-      if (threshold < '256' && threshold > '0'){
+      if ((threshold < 256) && (threshold > 0)){
         write8(BNO055_INTR_ACCEL_HG_THRES, threshold); // write the threshold value into the register
       } else {
         Serial.println("Threshold value higher than 255!");
@@ -679,12 +679,12 @@ bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, in
       write8(BNO055_INTR_GYR_SETT, (int8_t)((0 << 7) | (1 << 5) | (1 << 4) | (1 << 3))); // selects filtered data for high-rate interrupt
     // set threshold, hysteresis and duration for each axis
     // TODO: specify values for durations!
-      write8(BNO055_INTR_GYR_HR_X_SET, int value);
-      write8(BNO055_INTR_GYR_DUR_X, int value);
-      write8(BNO055_INTR_GYR_HR_Y_SET, int value);
-      write8(BNO055_INTR_GYR_DUR_Y, int value);
-      write8(BNO055_INTR_GYR_HR_Z_SET, int value);
-      write8(BNO055_INTR_GYR_DUR_Z, int value);
+      write8(BNO055_INTR_GYR_HR_X_SET, (int8_t)(1 << 0)); // 0x19 is the default
+      write8(BNO055_INTR_GYR_DUR_X, 0x19);
+      write8(BNO055_INTR_GYR_HR_Y_SET, (int8_t)(1 << 0));
+      write8(BNO055_INTR_GYR_DUR_Y, 0x19);
+      write8(BNO055_INTR_GYR_HR_Z_SET, (int8_t)(1 << 0));
+      write8(BNO055_INTR_GYR_DUR_Z, 0x19);
     break;
     case GYRO_AM:
     // set GYR_INT_SET bit 7 and GYR_INT_SET 3:5

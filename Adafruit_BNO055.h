@@ -21,7 +21,6 @@
 #define __ADAFRUIT_BNO055_H__
 
 #include <iostream>
-#include <string>
 
 #if (ARDUINO >= 100)
  #include "Arduino.h"
@@ -287,7 +286,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     typedef enum
     {
       ACC_NM                                                  = 7,
-      ACC_SM                                                  = 7,
+      ACC_SM                                                  = 0x7,
       ACC_AM                                                  = 6, // default
       ACC_HIGH_G                                              = 5,
       GYR_HIGH_RATE                                           = 3,
