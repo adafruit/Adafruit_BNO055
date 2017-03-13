@@ -591,7 +591,7 @@ bool Adafruit_BNO055::isFullyCalibrated(void)
 @brief  Enables interrupt and links it to the INT pin
 */
 /**************************************************************************/
-bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, char flags[3] )
+bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, String flags )
 {
   // initialise flags
   int X_HG_EN = 0; int Y_HG_EN = 0; int Z_HG_EN = 0;
