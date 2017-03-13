@@ -595,8 +595,18 @@ bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, in
 {
   // initialise flags
   int X_HG_EN = 0; int Y_HG_EN = 0; int Z_HG_EN = 0;
+  // set flags based on input String
   if (flags.indexOf("x") != '-1'){
-
+    X_HG_EN = 1;
+    Serial.println("X axis trigger enabled.");
+  }
+  if (flags.indexOf("y") != '-1'){
+    Y_HG_EN = 1;
+    Serial.println("Y axis trigger enabled.");
+  }
+  if (flags.indexOf("z") != '-1'){
+    Z_HG_EN = 1;
+    Serial.println("Z axis trigger enabled.");
   }
 
   adafruit_bno055_opmode_t lastMode = _mode;
@@ -644,7 +654,9 @@ bool Adafruit_BNO055::enableMotionInt( adafruit_bno055_intr_en_t int_en_code, in
   switch(int_en_code){
 
     case ACC_NM:
+      Serial.println("ACC_NM mode chosen.");
       write8(BNO055_INTR_ACCEL_NM_SETT, (0 << 0)); // this is setting whether or not slow or no motion is selected
+      write8(BNO055_INTR_ACCEL_NM_SETT, (1 << duration)); // this sets the number of points that must be above the threshold to trigger
       write8(BNO055_INTR_ACCEL_NM_THRES, (1 << threshold)); // this is dependent on ACC_CONFIG
     break;
 
