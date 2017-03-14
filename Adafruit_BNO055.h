@@ -284,7 +284,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     typedef enum
     {
       ACC_NM                                                  = 7,
-      ACC_SM                                                  = 0x7,
+      ACC_SM                                                  = 8,
       ACC_AM                                                  = 6, // default
       ACC_HIGH_G                                              = 5,
       GYR_HIGH_RATE                                           = 3,
@@ -320,10 +320,12 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  setAxisRemap        ( adafruit_bno055_axis_remap_config_t remapcode );
     void  setAxisSign         ( adafruit_bno055_axis_remap_sign_t remapsign );
-    bool  enableMotionInt     ( adafruit_bno055_intr_en_t int_en_code, int8_t duration, int8_t threshold, String flags );
+    bool  enableInterrupts    ( adafruit_bno055_intr_en_t int_en_code, bool triggerPin);
+    bool  enableInterruptAxes ( adafruit_bno055_intr_en_t int_en_code, String axes );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
+    char * checkInterruptStates( void );
     void  getSystemStatus     ( uint8_t *system_status,
                                 uint8_t *self_test_result,
                                 uint8_t *system_error);
