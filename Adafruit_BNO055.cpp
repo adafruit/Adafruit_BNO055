@@ -632,7 +632,7 @@ bool Adafruit_BNO055::enableInterrupts( adafruit_bno055_intr_en_t int_en_code, b
         status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 7)); // enable pin change
       }
       write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 7)); // enable interrupt
-      write8(BNO055_INTR_ACCEL_NM_SETT, (read8(BNO055_INTR_ACCEL_NM_SETT)) | (0 << 0)); // decides SM/NM
+      write8(BNO055_INTR_ACCEL_NM_SETT, (read8(BNO055_INTR_ACCEL_NM_SETT)) | (1 << 0)); // decides SM/NM
     break;
     case ACC_HIGH_G:
       if(triggerPin){
@@ -697,15 +697,15 @@ bool Adafruit_BNO055::enableInterruptAxes( adafruit_bno055_intr_en_t int_en_code
   // parse axis flags
   int X_EN = 0; int Y_EN = 0; int Z_EN = 0;
   // set flags based on input String
-  if (axes.indexOf("x") == 0){
+  if (axes.indexOf("x") != -1){
     X_EN = 1;
     Serial.println("X axis trigger enabled.");
   }
-  if (axes.indexOf("y") == 0){
+  if (axes.indexOf("y") != -1){
     Y_EN = 1;
     Serial.println("Y axis trigger enabled.");
   }
-  if (axes.indexOf("z") == 0){
+  if (axes.indexOf("z") != -1){
     Z_EN = 1;
     Serial.println("Z axis trigger enabled.");
   }
@@ -734,7 +734,15 @@ bool Adafruit_BNO055::enableInterruptAxes( adafruit_bno055_intr_en_t int_en_code
       }
     break;
     case ACC_SM:
-
+      if(X_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 2));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 3));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 4));
+      }
     break;
     case ACC_HIGH_G:
       if(X_EN){
@@ -791,7 +799,7 @@ bool Adafruit_BNO055::enableInterruptAxes( adafruit_bno055_intr_en_t int_en_code
 @brief  Retrieve interrupt states and settings - DEBUG FUNCTION
 */
 /**************************************************************************/
-void Adafruit_BNO055::checkInterruptStates( )
+void Adafruit_BNO055::checkInterruptStates( void )
 {
   // enter config mode
   adafruit_bno055_opmode_t modeback = _mode;
@@ -867,6 +875,131 @@ void Adafruit_BNO055::checkInterruptStates( )
   Serial.print("       GYRO_X_HYST: "); printWithZeros(gyro_x_hyst, 'e');
   Serial.print("       GYRO_Y_HYST: "); printWithZeros(gyro_y_hyst, 'e');
   Serial.print("       GYRO_Z_HYST: "); printWithZeros(gyro_z_hyst, 'e');
+}
+
+/**************************************************************************/
+/*!
+@brief  setIntThreshold
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::setIntThreshold( adafruit_bno055_intr_en_t int_en_code, int duration )
+{
+  // TODO: create different code set to group similar processes and increase code reuse
+  
+  // create status variable
+  int8_t status = 0; // if greater than zero a failure has occured
+
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  switch(int_en_code){
+    case ACC_NM:
+      // check duration range is 8-bit
+      if(duration > 0 && duration < 256){
+        // mask register value to just the first two bits
+        uint8_t masked_config = 0b00000011 & read8(BNO055_ACCEL_CONFIG);
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+        // display real value
+        float thresh_mg = 0.0;
+        if (masked_config == 0){
+          // threshold is in 2g range, 3.91mg per bit
+          thresh_mg = duration * 3.91;
+        } else if (masked_config == 1){
+          // threshold is in 4g range, 7.81mg per bit
+          thresh_mg = duration * 7.81;
+        } else if (masked_config == 2){
+          // threshold is in 8g range, 15.63mg per bit
+          thresh_mg = duration * 15.63;
+        } else if (masked_config == 3){
+          // threshold is in 16g range, 31.25mg per bit
+          thresh_mg = duration * 31.25;
+        } else {
+          Serial.println("Threshhold not set!");
+        }
+        delay(500);
+        Serial.print("NM threshold set to: "); Serial.print(thresh_mg);
+        Serial.println("mg.");
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case ACC_AM:
+    // check duration range is 8-bit
+    if(duration > 0 && duration < 256){
+      // mask register value to just the first two bits
+      uint8_t masked_config = 0b00000011 & read8(BNO055_ACCEL_CONFIG);
+      // write to the register
+      status = write8(BNO055_INTR_ACCEL_AM_THRES, duration);
+      // display real value
+      float thresh_mg = 0.0;
+      if (masked_config == 0){
+        // threshold is in 2g range, 3.91mg per bit
+        thresh_mg = duration * 3.91;
+      } else if (masked_config == 1){
+        // threshold is in 4g range, 7.81mg per bit
+        thresh_mg = duration * 7.81;
+      } else if (masked_config == 2){
+        // threshold is in 8g range, 15.63mg per bit
+        thresh_mg = duration * 15.63;
+      } else if (masked_config == 3){
+        // threshold is in 16g range, 31.25mg per bit
+        thresh_mg = duration * 31.25;
+      } else {
+        Serial.println("Threshhold not set!");
+      }
+      delay(500);
+      Serial.print("AM threshold set to: "); Serial.print(thresh_mg);
+      Serial.println("mg.");
+    } else {
+      // display error
+      Serial.println("Duration value not within 1 - 255 range!");
+    }
+    break;
+    case ACC_SM:
+      if(duration > 0 && duration < 256){
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case ACC_HIGH_G:
+      if(duration > 0 && duration < 256){
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case GYR_HIGH_RATE:
+
+    break;
+    case GYRO_AM:
+
+    break;
+  }
+
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+  // Set the previous operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+
+  if (status > 0){
+    return false;
+  } else {
+    return true;
+  }
 }
 
 /**************************************************************************/

@@ -328,6 +328,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setAxisSign         ( adafruit_bno055_axis_remap_sign_t remapsign );
     bool  enableInterrupts    ( adafruit_bno055_intr_en_t int_en_code, bool triggerPin);
     bool  enableInterruptAxes ( adafruit_bno055_intr_en_t int_en_code, String axes );
+    bool  setIntThreshold     ( adafruit_bno055_intr_en_t int_en_code, int duration );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
