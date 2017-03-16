@@ -791,24 +791,82 @@ bool Adafruit_BNO055::enableInterruptAxes( adafruit_bno055_intr_en_t int_en_code
 @brief  Retrieve interrupt states and settings - DEBUG FUNCTION
 */
 /**************************************************************************/
-char * Adafruit_BNO055::checkInterruptStates()
+void Adafruit_BNO055::checkInterruptStates( )
 {
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
   // check the interrupt status register
-
-  // check the enable registers
-
+  uint8_t interrupt_status = readIntStatus();
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+  // check all config registers
+  int8_t accel_config = read8(BNO055_ACCEL_CONFIG);
+  int8_t magneto_config = read8(BNO055_MAG_CONFIG);
+  int8_t gyro_config0 = read8(BNO055_GYRO_CONFIG0);
+  int8_t gyro_config1 = read8(BNO055_GYRO_CONFIG1);
+  // check the interrupt enable registers
+  int8_t interrupt_enables = read8(BNO055_INTR_EN_ADDR);
   // check the interrupt mask
-
-  // check the axis enable states
-
+  int8_t interrupt_mask = read8(BNO055_INTR_MSK_ADDR);
+  // check the accel axis enable states
+  int8_t accel_axis_enables = read8(BNO055_INTR_ACCEL_SETT);
+  // check the gyro axis enable states
+  int8_t gyro_axis_enables = read8(BNO055_INTR_GYR_SETT);
   // check the threshold levels
-
+  int8_t accel_nm_thresh = read8(BNO055_INTR_ACCEL_NM_THRES);
+  int8_t accel_am_thresh = read8(BNO055_INTR_ACCEL_AM_THRES);
+  int8_t accel_hg_thresh = read8(BNO055_INTR_ACCEL_HG_THRES);
+  int8_t gyro_am_thresh = read8(BNO055_INTR_GYR_AM_THRES);
   // check the duration levels
-
+  int8_t accel_nm_dur = read8(BNO055_INTR_ACCEL_NM_SETT);
+  int8_t accel_hg_dur = read8(BNO055_INTR_ACCEL_HG_DUR);
+  int8_t gyro_x_dur = read8(BNO055_INTR_GYR_DUR_X);
+  int8_t gyro_y_dur = read8(BNO055_INTR_GYR_DUR_Y);
+  int8_t gyro_z_dur = read8(BNO055_INTR_GYR_DUR_Z);
+  int8_t gyro_am_set = read8(BNO055_INTR_GYR_AM_SET);
   // check the hysteresis settings
-
-  // print settings as serial output
-
+  int8_t gyro_x_hyst = read8(BNO055_INTR_GYR_HR_X_SET);
+  int8_t gyro_y_hyst = read8(BNO055_INTR_GYR_HR_Y_SET);
+  int8_t gyro_z_hyst = read8(BNO055_INTR_GYR_HR_Z_SET);
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+  // Set the previous operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+  // print current call on interrupt status (clears status register)
+  Serial.print("     INTERRUPT_STA: "); printWithZeros(interrupt_status, 'e');
+  // print all config registers
+  Serial.print("      ACCEL_CONFIG: "); printWithZeros(accel_config, 'e');
+  Serial.print("    MAGNETO_CONFIG: "); printWithZeros(magneto_config, 'e');
+  Serial.print("      GYRO_CONFIG0: "); printWithZeros(gyro_config0, 'e');
+  Serial.print("      GYRO_CONFIG1: "); printWithZeros(gyro_config1, 'e');
+  // print the interrupt enable registers
+  Serial.print(" INTERRUPT_ENABLES: "); printWithZeros(interrupt_enables, 'e');
+  // print the interrupt mask
+  Serial.print("    INTERRUPT_MASK: "); printWithZeros(interrupt_mask, 'e');
+  // print the accel axis enable states
+  Serial.print("ACCEL_AXIS_ENABLES: "); printWithZeros(accel_axis_enables, 'e');
+  // print the gyro axis enable states
+  Serial.print(" GYRO_AXIS_ENABLES: "); printWithZeros(gyro_axis_enables, 'e');
+  // print the threshold levels
+  Serial.print("   ACCEL_NM_THRESH: "); printWithZeros(accel_nm_thresh, 'e');
+  Serial.print("   ACCEL_AM_THRESH: "); printWithZeros(accel_am_thresh, 'e');
+  Serial.print("   ACCEL_HG_THRESH: "); printWithZeros(accel_hg_thresh, 'e');
+  Serial.print("    GYRO_AM_THRESH: "); printWithZeros(gyro_am_thresh, 'e');
+  // print the duration levels
+  Serial.print("      ACCEL_NM_DUR: "); printWithZeros(accel_nm_dur, 'e');
+  Serial.print("      ACCEL_HG_DUR: "); printWithZeros(accel_hg_dur, 'e');
+  Serial.print("        GYRO_X_DUR: "); printWithZeros(gyro_x_dur, 'e');
+  Serial.print("        GYRO_Y_DUR: "); printWithZeros(gyro_y_dur, 'e');
+  Serial.print("        GYRO_Z_DUR: "); printWithZeros(gyro_z_dur, 'e');
+  Serial.print("       GYRO_AM_SET: "); printWithZeros(gyro_am_set, 'e');
+  // print the hysteresis settings
+  Serial.print("       GYRO_X_HYST: "); printWithZeros(gyro_x_hyst, 'e');
+  Serial.print("       GYRO_Y_HYST: "); printWithZeros(gyro_y_hyst, 'e');
+  Serial.print("       GYRO_Z_HYST: "); printWithZeros(gyro_z_hyst, 'e');
 }
 
 /**************************************************************************/
@@ -818,11 +876,15 @@ char * Adafruit_BNO055::checkInterruptStates()
 /**************************************************************************/
 int8_t Adafruit_BNO055::readIntStatus()
 {
-  setMode(OPERATION_MODE_CONFIG); // change to config to change page
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
   delay(25);
 
-  write8(BNO055_PAGE_ID_ADDR, 0); // set access to the first register page
-  delay(25);
+  // save selected page ID and switch to page 0
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x00);
+
   // read from INT_STA to determine the type of interrupt occurance
   int8_t intstatus = read8(BNO055_INTR_STAT_ADDR);
 
@@ -833,6 +895,13 @@ int8_t Adafruit_BNO055::readIntStatus()
      8 = Gyroscope high-rate interrupt
      32 = Accelerometer any-motion interrupt
      49 = Accelerometer no-motion/slow-motion interrupt */
+
+   // restore page ID
+   write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+   // Set the requested operating mode (see section 3.3)
+   setMode(modeback);
+   delay(20);
 
   return intstatus;
 }
@@ -914,4 +983,24 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
 
   /* ToDo: Check for errors! */
   return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Prints 8-bit register value with leading zeros
+*/
+/**************************************************************************/
+void Adafruit_BNO055::printWithZeros ( uint8_t input, char flag )
+{
+  for (uint8_t mask = 0x80; mask; mask >>= 1) {
+      if (mask & input) {
+          Serial.print('1');
+      }
+      else {
+          Serial.print('0');
+      }
+  }
+  if (flag == 'e'){
+    Serial.print('\n');
+  }
 }

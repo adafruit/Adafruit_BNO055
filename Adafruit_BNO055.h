@@ -177,6 +177,12 @@ class Adafruit_BNO055 : public Adafruit_Sensor
       BNO055_INTR_GYR_AM_THRES                                = 0x1E,
       BNO055_INTR_GYR_AM_SET                                  = 0x1F,
 
+      /* Sensor config registers */
+      BNO055_ACCEL_CONFIG                                     = 0x08,
+      BNO055_MAG_CONFIG                                       = 0x09,
+      BNO055_GYRO_CONFIG0                                     = 0x0A,
+      BNO055_GYRO_CONFIG1                                     = 0x0B,
+
       /* Axis remap registers */
       BNO055_AXIS_MAP_CONFIG_ADDR                             = 0X41,
       BNO055_AXIS_MAP_SIGN_ADDR                               = 0X42,
@@ -325,7 +331,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
     void  setExtCrystalUse    ( boolean usextal );
-    char * checkInterruptStates( void );
+    void  checkInterruptStates( void );
     void  getSystemStatus     ( uint8_t *system_status,
                                 uint8_t *self_test_result,
                                 uint8_t *system_error);
@@ -335,7 +341,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     imu::Vector<3>  getVector ( adafruit_vector_type_t vector_type );
     imu::Quaternion getQuat   ( void );
     int8_t          getTemp   ( void );
-    int8_t readIntStatus     ( void );
+    int8_t readIntStatus      ( void );
 
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
@@ -352,6 +358,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     byte  read8   ( adafruit_bno055_reg_t );
     bool  readLen ( adafruit_bno055_reg_t, byte* buffer, uint8_t len );
     int8_t  write8  ( adafruit_bno055_reg_t, byte value );
+    void  printWithZeros ( uint8_t input, char flag );
 
     uint8_t _address;
     int32_t _sensorID;
