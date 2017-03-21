@@ -1,4 +1,4 @@
-z/***************************************************************************
+/***************************************************************************
   This is a library for the BNO055 orientation sensor
 
   Designed specifically to work with the Adafruit BNO055 Breakout.
