@@ -135,7 +135,7 @@ void serialEvent(Serial p)
       int sysCal   = int(list[1]);
       int gyroCal  = int(list[2]);
       int accelCal = int(list[3]);
-      int magCal   = int(list[4]);
+      int magCal   = int(trim(list[4]));
       calLabel.setText("Calibration: Sys=" + sysCal + " Gyro=" + gyroCal + " Accel=" + accelCal + " Mag=" + magCal);
     }
   }
