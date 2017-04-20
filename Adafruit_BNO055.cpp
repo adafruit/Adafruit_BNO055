@@ -52,7 +52,7 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address)
     @brief  Sets up the HW
 */
 /**************************************************************************/
-bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
+bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode, uint8_t axis_remap_orientation, uint8_t axis_remap_sign)
 {
   /* Enable I2C */
   Wire.begin();
@@ -101,12 +101,10 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   */
 
   /* Configure axis mapping (see section 3.4) */
-  /*
-  write8(BNO055_AXIS_MAP_CONFIG_ADDR, REMAP_CONFIG_P2); // P0-P7, Default is P1
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, axis_remap_orientation); // P0-P7, Default is P1
   delay(10);
-  write8(BNO055_AXIS_MAP_SIGN_ADDR, REMAP_SIGN_P2); // P0-P7, Default is P1
+  write8(BNO055_AXIS_MAP_SIGN_ADDR, axis_remap_sign); // P0-P7, Default is P1
   delay(10);
-  */
   
   write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
   delay(10);
