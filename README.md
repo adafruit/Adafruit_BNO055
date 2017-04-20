@@ -1,4 +1,4 @@
-#Adafruit Unified BNO055 Driver (AHRS/Orientation) #
+# Adafruit Unified BNO055 Driver (AHRS/Orientation)  #
 
 This driver is for the Adafruit BNO055 Breakout (http://www.adafruit.com/products/2472),
 and is based on Adafruit's Unified Sensor Library (Adafruit_Sensor).
