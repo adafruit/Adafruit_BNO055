@@ -307,8 +307,8 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     /* Functions to deal with raw calibration data */
     bool  getSensorOffsets(uint8_t* calibData);
     bool  getSensorOffsets(adafruit_bno055_offsets_t &offsets_type);
-    void  setSensorOffsets(const uint8_t* calibData);
-    void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
+    bool  setSensorOffsets(const uint8_t* calibData);
+    bool  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
     bool  isFullyCalibrated(void);
 
   private:
