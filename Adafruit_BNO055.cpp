@@ -107,7 +107,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   write8(BNO055_AXIS_MAP_SIGN_ADDR, REMAP_SIGN_P2); // P0-P7, Default is P1
   delay(10);
   */
-  
+
   write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
@@ -208,6 +208,31 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test
     *system_error     = read8(BNO055_SYS_ERR_ADDR);
 
   delay(200);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the latest system status info. Only the status and without
+            a delay.
+*/
+/**************************************************************************/
+void Adafruit_BNO055::getOnlySystemStatus(uint8_t *system_status)
+{
+  write8(BNO055_PAGE_ID_ADDR, 0);
+
+  /* System Status (see section 4.3.58)
+     ---------------------------------
+     0 = Idle
+     1 = System Error
+     2 = Initializing Peripherals
+     3 = System Iniitalization
+     4 = Executing Self-Test
+     5 = Sensor fusio algorithm running
+     6 = System running without fusion algorithms */
+
+  if (system_status != 0)
+    *system_status    = read8(BNO055_SYS_STAT_ADDR);
+
 }
 
 /**************************************************************************/
