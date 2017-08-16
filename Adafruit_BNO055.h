@@ -273,7 +273,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     {
       VECTOR_ACCELEROMETER = BNO055_ACCEL_DATA_X_LSB_ADDR,
       VECTOR_MAGNETOMETER  = BNO055_MAG_DATA_X_LSB_ADDR,
-      VECTOR_GYROSCOPE     = BNO055_GYRO_DATA_X_LSB_ADDR,
+      VECTOR_GYROSCOPE     = BNO055_GYRO_DATA_X_LSB_ADDR, //angular velocity
       VECTOR_EULER         = BNO055_EULER_H_LSB_ADDR,
       VECTOR_LINEARACCEL   = BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR,
       VECTOR_GRAVITY       = BNO055_GRAVITY_DATA_X_LSB_ADDR
@@ -302,6 +302,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
 
     /* Adafruit_Sensor implementation */
     bool  getEvent  ( sensors_event_t* );
+    bool  getEvent(sensors_event_t*, adafruit_vector_type_t);
     void  getSensor ( sensor_t* );
 
     /* Functions to deal with raw calibration data */
