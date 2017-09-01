@@ -24,6 +24,7 @@ void setup(void)
     while (1);
   }
 
+
   delay(1000);
 }
 
@@ -44,6 +45,8 @@ void loop(void)
 
   if (printCount * BNO055_SAMPLERATE_DELAY_MS >= PRINT_DELAY_MS) {
     //enough iterations have passed that we can print the latest data
+    Serial.print("Heading: ");
+    Serial.println(orientationData.orientation.x);
     Serial.print("Position: ");
     Serial.print(xPos);
     Serial.print(" , ");
