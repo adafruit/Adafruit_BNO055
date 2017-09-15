@@ -88,7 +88,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   write8(BNO055_PWR_MODE_ADDR, POWER_MODE_NORMAL);
   delay(10);
 
-  write8(BNO055_PAGE_ID_ADDR, 0);
+  setPage(PAGE_0);
 
   /* Set the output units */
   /*
@@ -119,6 +119,18 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 
 /**************************************************************************/
 /*!
+ @brief  Puts the chip on the specified register page
+ */
+/**************************************************************************/
+void Adafruit_BNO055::setPage(adafruit_bno055_page_t page)
+{
+    _page = page;
+    write8(BNO055_PAGE_ID_ADDR, _page);
+    delay(30);
+}
+
+/**************************************************************************/
+/*!
     @brief  Puts the chip in the specified operating mode
 */
 /**************************************************************************/
@@ -141,7 +153,7 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
   /* Switch to config mode (just in case since this is the default) */
   setMode(OPERATION_MODE_CONFIG);
   delay(25);
-  write8(BNO055_PAGE_ID_ADDR, 0);
+  setPage(PAGE_0);
   if (usextal) {
     write8(BNO055_SYS_TRIGGER_ADDR, 0x80);
   } else {
@@ -153,6 +165,282 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
   delay(20);
 }
 
+/**************************************************************************/
+/*!
+    @brief  Resets all interrupts
+ */
+/**************************************************************************/
+void Adafruit_BNO055::resetInterrupts()
+{
+    // Read to get the current settings
+    int8_t sysTrigger = (int8_t)(read8(BNO055_SYS_TRIGGER_ADDR));
+    
+    // Set the flags as requested
+    sysTrigger = sliceValueIntoRegister(0x01, sysTrigger, BNO055_SYS_TRIGGER_ADDR_RST_INT_MSK, BNO055_SYS_TRIGGER_ADDR_RST_INT_POS);
+    
+    // Write back the entire register
+    write8(BNO055_SYS_TRIGGER_ADDR, sysTrigger);
+    delay(30);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Enables the interrupts on specific axes
+ */
+/**************************************************************************/
+void Adafruit_BNO055::enableInterruptsOnXYZ(uint8_t x, uint8_t y, uint8_t z)
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    adafruit_bno055_page_t lastPage = _page;
+    if (lastPage != PAGE_0) setPage(PAGE_0);
+
+    // Must be in config mode, so force it
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+    
+    // Read to get the current settings
+    int8_t intSettings = (int8_t)(read8(ACC_INT_Settings_ADDR));
+    
+    // Set the flags as requested--binary choice, so set or unset
+    intSettings = sliceValueIntoRegister(x ? 0x01 : 0x00, intSettings, ACC_INT_Settings_ACC_X_MSK, ACC_INT_Settings_ACC_X_POS);
+    intSettings = sliceValueIntoRegister(y ? 0x01 : 0x00, intSettings, ACC_INT_Settings_ACC_Y_MSK, ACC_INT_Settings_ACC_Y_POS);
+    intSettings = sliceValueIntoRegister(z ? 0x01 : 0x00, intSettings, ACC_INT_Settings_ACC_Z_MSK, ACC_INT_Settings_ACC_Z_POS);
+
+    // Write back the entire register
+    write8(ACC_INT_Settings_ADDR, intSettings);
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Enables the the slow/no motion interrupt, specifying settings
+ */
+/**************************************************************************/
+void Adafruit_BNO055::enableSlowNoMotion(uint8_t threshold, uint8_t duration, uint8_t motionType)
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    adafruit_bno055_page_t lastPage = _page;
+    if (lastPage != PAGE_0) setPage(PAGE_0);
+    
+    // Must be in config mode, so force it
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+
+    // Enable which one: slow motion or no motion
+    // Set duration (bits 1-6), first
+    int8_t smnmSettings = (int8_t)(read8(ACC_NM_SET_ADDR));
+    smnmSettings = sliceValueIntoRegister(motionType, smnmSettings, ACC_NM_SET_SLOWNO_MSK, ACC_NM_SET_SLOWNO_POS);
+    smnmSettings = sliceValueIntoRegister(duration, smnmSettings, ACC_NM_SET_DUR_MSK, ACC_NM_SET_DUR_POS);
+    write8(ACC_NM_SET_ADDR, smnmSettings);
+
+    // Set the threshold (full byte)
+    int8_t threshSettings = (int8_t)(read8(ACC_NM_THRES_ADDR));
+    threshSettings = sliceValueIntoRegister(threshold, threshSettings, ACC_NM_THRES_MSK, ACC_NM_THRES_POS);
+    write8(ACC_NM_THRES_ADDR, threshSettings);
+
+    // Enable the interrupt
+    setInterruptEnableAccelNM(ENABLE);
+    
+    // Fire on the pin
+    setInterruptMaskAccelNM(ENABLE);
+    
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Disable the the slow/no motion interrupt
+ */
+/**************************************************************************/
+void Adafruit_BNO055::disableSlowNoMotion()
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    adafruit_bno055_page_t lastPage = _page;
+    if (lastPage != PAGE_0) setPage(PAGE_0);
+    
+    // Must be in config mode, so force it
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+    
+    // Disable the interrupt
+    setInterruptEnableAccelNM(DISABLE);
+    
+    // Stop firing on the pin
+    setInterruptMaskAccelNM(DISABLE);
+    
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Enables the the any motion interrupt, specifying settings
+ */
+/**************************************************************************/
+void Adafruit_BNO055::enableAnyMotion(uint8_t threshold, uint8_t duration)
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    adafruit_bno055_page_t lastPage = _page;
+    if (lastPage != PAGE_0) setPage(PAGE_0);
+    
+    // Must be in config mode, so force it
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+    
+    // Set duration (bits 1-6)
+    int8_t intSettings = (int8_t)(read8(ACC_INT_Settings_ADDR));
+    intSettings = sliceValueIntoRegister(duration, intSettings, ACC_INT_Settings_AM_DUR_MSK, ACC_INT_Settings_AM_DUR_POS);
+    write8(ACC_INT_Settings_ADDR, intSettings);
+    
+    // Set the threshold (full byte)
+    int8_t threshSettings = (int8_t)(read8(ACC_AM_THRES_ADDR));
+    threshSettings = sliceValueIntoRegister(threshold, threshSettings, ACC_AM_THRES_MSK, ACC_AM_THRES_POS);
+    write8(ACC_AM_THRES_ADDR, threshSettings);
+    
+    // Enable the interrupt
+    setInterruptEnableAccelAM(ENABLE);
+    
+    // Fire on the pin
+    setInterruptMaskAccelAM(ENABLE);
+    
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Disable the the any motion interrupt
+ */
+/**************************************************************************/
+void Adafruit_BNO055::disableAnyMotion()
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    adafruit_bno055_page_t lastPage = _page;
+    if (lastPage != PAGE_0) setPage(PAGE_0);
+    
+    // Must be in config mode, so force it
+    adafruit_bno055_opmode_t lastMode = _mode;
+    setMode(OPERATION_MODE_CONFIG);
+    
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+    
+    // Disable the interrupt
+    setInterruptEnableAccelAM(DISABLE);
+    
+    // Stop firing on the pin
+    setInterruptMaskAccelAM(DISABLE);
+    
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Enable or disable the slow/no motion interrupt entirely
+ */
+/**************************************************************************/
+// WARNING: ONLY CALL INSIDE PAGE/CONFIG WRAPPER
+void Adafruit_BNO055::setInterruptEnableAccelNM(uint8_t enable) {
+    int8_t intEnable = (int8_t)(read8(INT_EN_ADDR));
+    intEnable = sliceValueIntoRegister(enable, intEnable, INT_EN_ACC_NM_MSK, INT_EN_ACC_NM_POS);
+    write8(INT_EN_ADDR, intEnable);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Tell slow/no interrupt to set pin and output or just set the output
+ */
+/**************************************************************************/
+// WARNING: ONLY CALL INSIDE PAGE/CONFIG WRAPPER
+void Adafruit_BNO055::setInterruptMaskAccelNM(uint8_t enable) {
+    int8_t intMask = (int8_t)(read8(INT_MSK_ADDR));
+    intMask = sliceValueIntoRegister(enable, intMask, INT_MSK_ACC_NM_MSK, INT_MSK_ACC_NM_POS);
+    write8(INT_MSK_ADDR, intMask);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Enable or disable the any motion interrupt entirely
+ */
+/**************************************************************************/
+// WARNING: ONLY CALL INSIDE PAGE/CONFIG WRAPPER
+void Adafruit_BNO055::setInterruptEnableAccelAM(uint8_t enable) {
+    int8_t intEnable = (int8_t)(read8(INT_EN_ADDR));
+    intEnable = sliceValueIntoRegister(enable, intEnable, INT_EN_ACC_AM_MSK, INT_EN_ACC_AM_POS);
+    write8(INT_EN_ADDR, intEnable);
+}
+
+/**************************************************************************/
+/*!
+ @brief  Tell any motion interrupt to set pin and output or just set the output
+ */
+/**************************************************************************/
+// WARNING: ONLY CALL INSIDE PAGE/CONFIG WRAPPER
+void Adafruit_BNO055::setInterruptMaskAccelAM(uint8_t enable) {
+    int8_t intMask = (int8_t)(read8(INT_MSK_ADDR));
+    intMask = sliceValueIntoRegister(enable, intMask, INT_MSK_ACC_AM_MSK, INT_MSK_ACC_AM_POS);
+    write8(INT_MSK_ADDR, intMask);
+}
 
 /**************************************************************************/
 /*!
@@ -161,7 +449,7 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
 /**************************************************************************/
 void Adafruit_BNO055::getSystemStatus(uint8_t *system_status, uint8_t *self_test_result, uint8_t *system_error)
 {
-  write8(BNO055_PAGE_ID_ADDR, 0);
+  setPage(PAGE_0);
 
   /* System Status (see section 4.3.58)
      ---------------------------------
@@ -570,7 +858,8 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
     Wire.send(value);
   #endif
   Wire.endTransmission();
-
+  delayMicroseconds(150);
+    
   /* ToDo: Check for error! */
   return true;
 }
@@ -629,3 +918,13 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
   /* ToDo: Check for errors! */
   return true;
 }
+
+/**************************************************************************/
+/*!
+ @brief  Sets the value of the partial (or full) register
+ */
+/**************************************************************************/
+uint8_t Adafruit_BNO055::sliceValueIntoRegister(uint8_t value, uint8_t reg, uint8_t mask, uint8_t position) {
+    return (reg & ~mask) | ((value << position) & mask);
+}
+
