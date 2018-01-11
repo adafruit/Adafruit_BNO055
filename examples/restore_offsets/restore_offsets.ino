@@ -204,6 +204,7 @@ void setup(void)
     /* Optional: Display current status */
     displaySensorStatus();
 
+   //Crystal must be configured AFTER loading calibration data into BNO055.
     bno.setExtCrystalUse(true);
 
     sensors_event_t event;
