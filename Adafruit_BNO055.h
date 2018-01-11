@@ -317,6 +317,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     byte  read8   ( adafruit_bno055_reg_t );
     bool  readLen ( adafruit_bno055_reg_t, byte* buffer, uint8_t len );
     bool  write8  ( adafruit_bno055_reg_t, byte value );
+    bool  writeLen( adafruit_bno055_reg_t, const uint8_t* buffer, uint8_t len );
 
     uint8_t _address;
     int32_t _sensorID;
