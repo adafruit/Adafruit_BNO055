@@ -47,12 +47,12 @@ typedef struct
     int16_t accel_offset_x;
     int16_t accel_offset_y;
     int16_t accel_offset_z;
-    int16_t gyro_offset_x;
-    int16_t gyro_offset_y;
-    int16_t gyro_offset_z;
     int16_t mag_offset_x;
     int16_t mag_offset_y;
     int16_t mag_offset_z;
+    int16_t gyro_offset_x;
+    int16_t gyro_offset_y;
+    int16_t gyro_offset_z;
 
     int16_t accel_radius;
     int16_t mag_radius;
