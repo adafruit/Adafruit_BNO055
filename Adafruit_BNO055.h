@@ -313,6 +313,10 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
     bool  isFullyCalibrated(void);
 
+    /* Functions to deal with power management */
+    void  enterSuspendMode();
+    void  enterNormalMode();
+
   private:
     byte  read8   ( adafruit_bno055_reg_t );
     bool  readLen ( adafruit_bno055_reg_t, byte* buffer, uint8_t len );
