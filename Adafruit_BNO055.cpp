@@ -354,6 +354,10 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type)
       break;
     case VECTOR_ACCELEROMETER:
     case VECTOR_LINEARACCEL:
+      xyz[0] = ((double)x);
+      xyz[1] = ((double)y);
+      xyz[2] = ((double)z);
+      break;
     case VECTOR_GRAVITY:
       /* 1m/s^2 = 100 LSB */
       xyz[0] = ((double)x)/100.0;
