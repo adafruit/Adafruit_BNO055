@@ -4,7 +4,7 @@
   Designed specifically to work with the Adafruit BNO055 Breakout.
 
   Pick one up today in the adafruit shop!
-  ------> http://www.adafruit.com/products
+  ------> https://www.adafruit.com/product/2472
 
   These sensors use I2C to communicate, 2 pins are required to interface.
 
