@@ -617,6 +617,458 @@ bool Adafruit_BNO055::isFullyCalibrated(void)
     return true;
 }
 
+/**************************************************************************/
+/*!
+@brief  Enables interrupt type specified and disables/enables interrupt pin
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::enableInterrupts( adafruit_bno055_intr_en_t int_en_code, bool triggerPin)
+{
+  // create status variable
+  int8_t status = 0; // if greater than zero a failure has occured
+
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  // enable specific interrupt type requested
+  switch (int_en_code) //TODO: change these definitions (ACC_NM etc) into a number sequence
+  {
+    case ACC_NM:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 7)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 7)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 7)); // enable interrupt
+      write8(BNO055_INTR_ACCEL_NM_SETT, (read8(BNO055_INTR_ACCEL_NM_SETT)) | (0 << 0)); // decides SM/NM
+    break;
+    case ACC_AM:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 6)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 6)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 6)); // enable interrupt
+    break;
+    case ACC_SM:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 7)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 7)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 7)); // enable interrupt
+      write8(BNO055_INTR_ACCEL_NM_SETT, (read8(BNO055_INTR_ACCEL_NM_SETT)) | (1 << 0)); // decides SM/NM
+    break;
+    case ACC_HIGH_G:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 5)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 5)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 5)); // enable interrupt
+    break;
+    case GYR_HIGH_RATE:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 3)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 3)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 3)); // enable interrupt
+    break;
+    case GYRO_AM:
+      if(triggerPin){
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (1 << 2)); // enable pin change
+      } else {
+        status = write8(BNO055_INTR_MSK_ADDR, (read8(BNO055_INTR_MSK_ADDR)) | (0 << 2)); // enable pin change
+      }
+      write8(BNO055_INTR_EN_ADDR, (read8(BNO055_INTR_EN_ADDR)) | (1 << 2)); // enable interrupt
+    break;
+  }
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+  // Set the requested operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+
+  if (status > 0){
+    return false;
+  } else {
+    return true;
+  }
+
+}
+
+/**************************************************************************/
+/*!
+@brief  Sets interrupt axes
+*/
+/**************************************************************************/
+
+bool Adafruit_BNO055::enableInterruptAxes( adafruit_bno055_intr_en_t int_en_code, String axes )
+{
+  // create status variable
+  int8_t status = 0; // if greater than zero a failure has occured
+
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  // parse axis flags
+  int X_EN = 0; int Y_EN = 0; int Z_EN = 0;
+  // set flags based on input String
+  if (axes.indexOf("x") != -1){
+    X_EN = 1;
+    Serial.println("X axis trigger enabled.");
+  }
+  if (axes.indexOf("y") != -1){
+    Y_EN = 1;
+    Serial.println("Y axis trigger enabled.");
+  }
+  if (axes.indexOf("z") != -1){
+    Z_EN = 1;
+    Serial.println("Z axis trigger enabled.");
+  }
+
+  switch(int_en_code){
+    case ACC_NM:
+      if(X_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 2));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 3));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 4));
+      }
+    break;
+    case ACC_AM:
+      if(X_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 2));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 3));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 4));
+      }
+    break;
+    case ACC_SM:
+      if(X_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 2));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 3));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 4));
+      }
+    break;
+    case ACC_HIGH_G:
+      if(X_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 5));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 6));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_ACCEL_SETT, (read8(BNO055_INTR_ACCEL_SETT)) | (1 << 7));
+      }
+    break;
+    case GYR_HIGH_RATE:
+      if(X_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 3));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 4));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 5));
+      }
+    break;
+    case GYRO_AM:
+      if(X_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 2));
+      }
+      if(Y_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 1));
+      }
+      if(Z_EN){
+        status = write8(BNO055_INTR_GYR_SETT, (read8(BNO055_INTR_GYR_SETT)) | (1 << 0));
+      }
+    break;
+  }
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+  // Set the requested operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+
+  if (status > 0){
+    return false;
+  } else {
+    return true;
+  }
+
+}
+// TODO: setThreshold and setDuration, setHysteresis. Also disableInterrupt, disableInterruptAxes and checkInterruptStates
+
+/**************************************************************************/
+/*!
+@brief  Retrieve interrupt states and settings - DEBUG FUNCTION
+*/
+/**************************************************************************/
+void Adafruit_BNO055::checkInterruptStates( void )
+{
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  // check the interrupt status register
+  uint8_t interrupt_status = readIntStatus();
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+  // check all config registers
+  int8_t accel_config = read8(BNO055_ACCEL_CONFIG);
+  int8_t magneto_config = read8(BNO055_MAG_CONFIG);
+  int8_t gyro_config0 = read8(BNO055_GYRO_CONFIG0);
+  int8_t gyro_config1 = read8(BNO055_GYRO_CONFIG1);
+  // check the interrupt enable registers
+  int8_t interrupt_enables = read8(BNO055_INTR_EN_ADDR);
+  // check the interrupt mask
+  int8_t interrupt_mask = read8(BNO055_INTR_MSK_ADDR);
+  // check the accel axis enable states
+  int8_t accel_axis_enables = read8(BNO055_INTR_ACCEL_SETT);
+  // check the gyro axis enable states
+  int8_t gyro_axis_enables = read8(BNO055_INTR_GYR_SETT);
+  // check the threshold levels
+  int8_t accel_nm_thresh = read8(BNO055_INTR_ACCEL_NM_THRES);
+  int8_t accel_am_thresh = read8(BNO055_INTR_ACCEL_AM_THRES);
+  int8_t accel_hg_thresh = read8(BNO055_INTR_ACCEL_HG_THRES);
+  int8_t gyro_am_thresh = read8(BNO055_INTR_GYR_AM_THRES);
+  // check the duration levels
+  int8_t accel_nm_dur = read8(BNO055_INTR_ACCEL_NM_SETT);
+  int8_t accel_hg_dur = read8(BNO055_INTR_ACCEL_HG_DUR);
+  int8_t gyro_x_dur = read8(BNO055_INTR_GYR_DUR_X);
+  int8_t gyro_y_dur = read8(BNO055_INTR_GYR_DUR_Y);
+  int8_t gyro_z_dur = read8(BNO055_INTR_GYR_DUR_Z);
+  int8_t gyro_am_set = read8(BNO055_INTR_GYR_AM_SET);
+  // check the hysteresis settings
+  int8_t gyro_x_hyst = read8(BNO055_INTR_GYR_HR_X_SET);
+  int8_t gyro_y_hyst = read8(BNO055_INTR_GYR_HR_Y_SET);
+  int8_t gyro_z_hyst = read8(BNO055_INTR_GYR_HR_Z_SET);
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+  // Set the previous operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+  // print current call on interrupt status (clears status register)
+  Serial.print("     INTERRUPT_STA: "); printWithZeros(interrupt_status, 'e');
+  // print all config registers
+  Serial.print("      ACCEL_CONFIG: "); printWithZeros(accel_config, 'e');
+  Serial.print("    MAGNETO_CONFIG: "); printWithZeros(magneto_config, 'e');
+  Serial.print("      GYRO_CONFIG0: "); printWithZeros(gyro_config0, 'e');
+  Serial.print("      GYRO_CONFIG1: "); printWithZeros(gyro_config1, 'e');
+  // print the interrupt enable registers
+  Serial.print(" INTERRUPT_ENABLES: "); printWithZeros(interrupt_enables, 'e');
+  // print the interrupt mask
+  Serial.print("    INTERRUPT_MASK: "); printWithZeros(interrupt_mask, 'e');
+  // print the accel axis enable states
+  Serial.print("ACCEL_AXIS_ENABLES: "); printWithZeros(accel_axis_enables, 'e');
+  // print the gyro axis enable states
+  Serial.print(" GYRO_AXIS_ENABLES: "); printWithZeros(gyro_axis_enables, 'e');
+  // print the threshold levels
+  Serial.print("   ACCEL_NM_THRESH: "); printWithZeros(accel_nm_thresh, 'e');
+  Serial.print("   ACCEL_AM_THRESH: "); printWithZeros(accel_am_thresh, 'e');
+  Serial.print("   ACCEL_HG_THRESH: "); printWithZeros(accel_hg_thresh, 'e');
+  Serial.print("    GYRO_AM_THRESH: "); printWithZeros(gyro_am_thresh, 'e');
+  // print the duration levels
+  Serial.print("      ACCEL_NM_DUR: "); printWithZeros(accel_nm_dur, 'e');
+  Serial.print("      ACCEL_HG_DUR: "); printWithZeros(accel_hg_dur, 'e');
+  Serial.print("        GYRO_X_DUR: "); printWithZeros(gyro_x_dur, 'e');
+  Serial.print("        GYRO_Y_DUR: "); printWithZeros(gyro_y_dur, 'e');
+  Serial.print("        GYRO_Z_DUR: "); printWithZeros(gyro_z_dur, 'e');
+  Serial.print("       GYRO_AM_SET: "); printWithZeros(gyro_am_set, 'e');
+  // print the hysteresis settings
+  Serial.print("       GYRO_X_HYST: "); printWithZeros(gyro_x_hyst, 'e');
+  Serial.print("       GYRO_Y_HYST: "); printWithZeros(gyro_y_hyst, 'e');
+  Serial.print("       GYRO_Z_HYST: "); printWithZeros(gyro_z_hyst, 'e');
+}
+
+/**************************************************************************/
+/*!
+@brief  setIntThreshold
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::setIntThreshold( adafruit_bno055_intr_en_t int_en_code, int duration )
+{
+  // TODO: create different code set to group similar processes and increase code reuse
+  
+  // create status variable
+  int8_t status = 0; // if greater than zero a failure has occured
+
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  // save selected page ID and switch to page 1
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  switch(int_en_code){
+    case ACC_NM:
+      // check duration range is 8-bit
+      if(duration > 0 && duration < 256){
+        // mask register value to just the first two bits
+        uint8_t masked_config = 0b00000011 & read8(BNO055_ACCEL_CONFIG);
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+        // display real value
+        float thresh_mg = 0.0;
+        if (masked_config == 0){
+          // threshold is in 2g range, 3.91mg per bit
+          thresh_mg = duration * 3.91;
+        } else if (masked_config == 1){
+          // threshold is in 4g range, 7.81mg per bit
+          thresh_mg = duration * 7.81;
+        } else if (masked_config == 2){
+          // threshold is in 8g range, 15.63mg per bit
+          thresh_mg = duration * 15.63;
+        } else if (masked_config == 3){
+          // threshold is in 16g range, 31.25mg per bit
+          thresh_mg = duration * 31.25;
+        } else {
+          Serial.println("Threshhold not set!");
+        }
+        delay(500);
+        Serial.print("NM threshold set to: "); Serial.print(thresh_mg);
+        Serial.println("mg.");
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case ACC_AM:
+    // check duration range is 8-bit
+    if(duration > 0 && duration < 256){
+      // mask register value to just the first two bits
+      uint8_t masked_config = 0b00000011 & read8(BNO055_ACCEL_CONFIG);
+      // write to the register
+      status = write8(BNO055_INTR_ACCEL_AM_THRES, duration);
+      // display real value
+      float thresh_mg = 0.0;
+      if (masked_config == 0){
+        // threshold is in 2g range, 3.91mg per bit
+        thresh_mg = duration * 3.91;
+      } else if (masked_config == 1){
+        // threshold is in 4g range, 7.81mg per bit
+        thresh_mg = duration * 7.81;
+      } else if (masked_config == 2){
+        // threshold is in 8g range, 15.63mg per bit
+        thresh_mg = duration * 15.63;
+      } else if (masked_config == 3){
+        // threshold is in 16g range, 31.25mg per bit
+        thresh_mg = duration * 31.25;
+      } else {
+        Serial.println("Threshhold not set!");
+      }
+      delay(500);
+      Serial.print("AM threshold set to: "); Serial.print(thresh_mg);
+      Serial.println("mg.");
+    } else {
+      // display error
+      Serial.println("Duration value not within 1 - 255 range!");
+    }
+    break;
+    case ACC_SM:
+      if(duration > 0 && duration < 256){
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case ACC_HIGH_G:
+      if(duration > 0 && duration < 256){
+        // write to the register
+        status = write8(BNO055_INTR_ACCEL_NM_THRES, duration);
+      } else {
+        // display error
+        Serial.println("Duration value not within 1 - 255 range!");
+      }
+    break;
+    case GYR_HIGH_RATE:
+
+    break;
+    case GYRO_AM:
+
+    break;
+  }
+
+  // restore page ID
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+  // Set the previous operating mode (see section 3.3)
+  setMode(modeback);
+  delay(20);
+
+  if (status > 0){
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/**************************************************************************/
+/*!
+@brief  On interrupt reads the interrupt status register
+*/
+/**************************************************************************/
+int8_t Adafruit_BNO055::readIntStatus()
+{
+  // enter config mode
+  adafruit_bno055_opmode_t modeback = _mode;
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  // save selected page ID and switch to page 0
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x00);
+
+  // read from INT_STA to determine the type of interrupt occurance
+  int8_t intstatus = read8(BNO055_INTR_STAT_ADDR);
+
+  /* Interrupt Status (see section 4.3.56)
+     ---------------------------------
+     0 = No Status
+     4 = Gyroscope any-motion interrupt
+     8 = Gyroscope high-rate interrupt
+     32 = Accelerometer any-motion interrupt
+     49 = Accelerometer no-motion/slow-motion interrupt */
+
+   // restore page ID
+   write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+   // Set the requested operating mode (see section 3.3)
+   setMode(modeback);
+   delay(20);
+
+  return intstatus;
+}
 
 /***************************************************************************
  PRIVATE FUNCTIONS
@@ -627,7 +1079,7 @@ bool Adafruit_BNO055::isFullyCalibrated(void)
     @brief  Writes an 8 bit value over I2C
 */
 /**************************************************************************/
-bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
+int8_t Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
 {
   Wire.beginTransmission(_address);
   #if ARDUINO >= 100
@@ -637,10 +1089,9 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value)
     Wire.send(reg);
     Wire.send(value);
   #endif
-  Wire.endTransmission();
+  int8_t status = Wire.endTransmission();
 
-  /* ToDo: Check for error! */
-  return true;
+  return status;
 }
 
 /**************************************************************************/
@@ -696,4 +1147,24 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t 
 
   /* ToDo: Check for errors! */
   return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Prints 8-bit register value with leading zeros
+*/
+/**************************************************************************/
+void Adafruit_BNO055::printWithZeros ( uint8_t input, char flag )
+{
+  for (uint8_t mask = 0x80; mask; mask >>= 1) {
+      if (mask & input) {
+          Serial.print('1');
+      }
+      else {
+          Serial.print('0');
+      }
+  }
+  if (flag == 'e'){
+    Serial.print('\n');
+  }
 }
