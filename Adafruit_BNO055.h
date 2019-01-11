@@ -14,7 +14,7 @@
  *  please support Adafruit andopen-source hardware by purchasing products
  *  from Adafruit!
  *
- *  K.Townsend (Adafruit Industries)*
+ *  K.Townsend (Adafruit Industries)
  *
  *  MIT license, all text above must be included in any redistribution
  */

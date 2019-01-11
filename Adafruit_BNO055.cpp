@@ -2,28 +2,29 @@
  * @file Adafruit_BNO055.cpp
  *
  *  @mainpage Adafruit BNO055 Orientation Sensor
- * 
+ *
  *  @section intro_sec Introduction
  *
- *    This is a library for the BNO055 orientation sensor
+ *  This is a library for the BNO055 orientation sensor
  *
- *    Designed specifically to work with the Adafruit BNO055 Breakout.
+ *  Designed specifically to work with the Adafruit BNO055 Breakout.
  *
- *    Pick one up today in the adafruit shop!
- *    ------> https://www.adafruit.com/product/2472
+ *  Pick one up today in the adafruit shop!
+ *  ------> https://www.adafruit.com/product/2472
  *
- *    These sensors use I2C to communicate, 2 pins are required to interface.
+ *  These sensors use I2C to communicate, 2 pins are required to interface.
  *
- *    Adafruit invests time and resources providing this open source code,
- *    please support Adafruit andopen-source hardware by purchasing products
- *    from Adafruit!
+ *  Adafruit invests time and resources providing this open source code,
+ *  please support Adafruit andopen-source hardware by purchasing products
+ *  from Adafruit!
  *
  *  @section author Author
  *
  *  K.Townsend (Adafruit Industries)
  *
- *    @section license License
- *    MIT license, all text above must be included in any redistribution
+ *  @section license License
+ *
+ *  MIT license, all text above must be included in any redistribution
  */
 
 #if ARDUINO >= 100
@@ -59,14 +60,14 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   /* BNO055 clock stretches for 500us or more! */
 #ifdef ESP8266
   /* Allow for 1000us of clock stretching */
-  Wire.setClockStretchLimit(1000); 
+  Wire.setClockStretchLimit(1000);
 #endif
 
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if (id != BNO055_ID) {
     /* hold on for boot */
-    delay(1000); 
+    delay(1000);
     id = read8(BNO055_CHIP_ID_ADDR);
     if (id != BNO055_ID) {
       /* still not? ok bail */
@@ -90,7 +91,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
 
   write8(BNO055_PAGE_ID_ADDR, 0);
 
-  /* Set the output units 
+  /* Set the output units
      uint8_t unitsel = (0 << 7) | // Orientation = Android
                        (0 << 4) | // Temperature = Celsius
                        (0 << 2) | // Euler = Degrees
@@ -192,7 +193,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status,
      3 = System Iniitalization
      4 = Executing Self-Test
      5 = Sensor fusio algorithm running
-     6 = System running without fusion algorithms 
+     6 = System running without fusion algorithms
    */
 
   if (system_status != 0)
@@ -200,13 +201,13 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status,
 
   /* Self Test Results
      1 = test passed, 0 = test failed
-   
+
      Bit 0 = Accelerometer self test
      Bit 1 = Magnetometer self test
      Bit 2 = Gyroscope self test
      Bit 3 = MCU self test
-   
-     0x0F = all good! 
+
+     0x0F = all good!
    */
 
   if (self_test_result != 0)
@@ -223,7 +224,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status,
      7 = BNO low power mode not available for selected operat ion mode
      8 = Accelerometer power mode not available
      9 = Fusion algorithm configuration error
-     A = Sensor configuration error 
+     A = Sensor configuration error
    */
 
   if (system_error != 0)
@@ -312,9 +313,9 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
   y = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
   z = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
 
-  /*! 
+  /*!
    * Convert the value to an appropriate range (section 3.6.4)
-   * and assign the value to the Vector type 
+   * and assign the value to the Vector type
    */
   switch (vector_type) {
   case VECTOR_MAGNETOMETER:
@@ -370,7 +371,7 @@ imu::Quaternion Adafruit_BNO055::getQuat() {
    * Assign to Quaternion
    * See
    * http://ae-bst.resource.bosch.com/media/products/dokumente/bno055/BST_BNO055_DS000_12~1.pdf
-   * 3.6.5.5 Orientation (Quaternion)  
+   * 3.6.5.5 Orientation (Quaternion)
    */
   const double scale = (1.0 / (1 << 14));
   imu::Quaternion quat(scale * w, scale * x, scale * y, scale * z);
@@ -380,7 +381,7 @@ imu::Quaternion Adafruit_BNO055::getQuat() {
 /*!
  *  @brief  Provides the sensor_t data for this sensor
  *  @param  sensor
-*/
+ */
 void Adafruit_BNO055::getSensor(sensor_t *sensor) {
   /* Clear the sensor_t object */
   memset(sensor, 0, sizeof(sensor_t));
@@ -499,7 +500,8 @@ bool Adafruit_BNO055::getSensorOffsets(
 }
 
 /*!
- *  @brief  Writes an array of calibration values to the sensor's offset registers
+ *  @brief  Writes an array of calibration values to the sensor's offset
+ *          registers
  *  @param  calibData
  */
 void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
@@ -546,7 +548,7 @@ void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
 /*!
  *  @brief  Writes to the sensor's offset registers from an offset struct
  *  @param  offsets_type
-*/
+ */
 void Adafruit_BNO055::setSensorOffsets(
     const adafruit_bno055_offsets_t &offsets_type) {
   adafruit_bno055_opmode_t lastMode = _mode;
