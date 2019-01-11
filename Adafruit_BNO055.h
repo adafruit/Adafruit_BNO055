@@ -1,21 +1,22 @@
 /*!
+ *  @file Adafruit_BNO055.h
  *
- *  This is a library for the BNO055 orientation sensor
+ *    This is a library for the BNO055 orientation sensor
  *
- *  Designed specifically to work with the Adafruit BNO055 Breakout.
+ *    Designed specifically to work with the Adafruit BNO055 Breakout.
  *
- *  Pick one up today in the adafruit shop!
- *  ------> https://www.adafruit.com/product/2472
+ *    Pick one up today in the adafruit shop!
+ *    ------> https://www.adafruit.com/product/2472
  *
- *  These sensors use I2C to communicate, 2 pins are required to interface.
+ *    These sensors use I2C to communicate, 2 pins are required to interface.
  *
- *  Adafruit invests time and resources providing this open source code,
- *  please support Adafruit andopen-source hardware by purchasing products
- *  from Adafruit!
+ *    Adafruit invests time and resources providing this open source code,
+ *    please support Adafruit andopen-source hardware by purchasing products
+ *    from Adafruit!
  *
- *  Written by KTOWN for Adafruit Industries.
+ *    K.Townsend (Adafruit Industries)*
  *
- *  MIT license, all text above must be included in any redistribution
+ *    MIT license, all text above must be included in any redistribution
  */
 
 #ifndef __ADAFRUIT_BNO055_H__
@@ -37,10 +38,14 @@
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
 
+/** BNO055 Address A **/
 #define BNO055_ADDRESS_A (0x28)
+/** BNO055 Address B **/
 #define BNO055_ADDRESS_B (0x29)
+/** BNO055 ID **/
 #define BNO055_ID (0xA0)
 
+/** Offsets registers **/
 #define NUM_BNO055_OFFSET_REGISTERS (22)
 
 /** A structure to represent offsets **/
