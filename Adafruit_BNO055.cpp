@@ -36,8 +36,16 @@
 
 /*!
  *  @brief  Instantiates a new Adafruit_BNO055 class
+ *  @param  sensorID
+ *          sensor ID
+ *  @param  address
+ *          i2c address
  */
-Adafruit_BNO055::Adafruit_BNO055() {}
+Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
+                                 TwoWire *theWire) {
+  _sensorID = sensorID;
+  _address = address;
+}
 
 /*!
  *  @brief  Sets up the HW
@@ -56,75 +64,30 @@ Adafruit_BNO055::Adafruit_BNO055() {}
  *            OPERATION_MODE_M4G,
  *            OPERATION_MODE_NDOF_FMC_OFF,
  *            OPERATION_MODE_NDOF]
- *  @param  *theWire
- *          Wire object
  *  @return true if process is successful
  */
-bool Adafruit_BNO055::begin() {
-  _wire = &Wire;
-#if defined(ARDUINO_SAMD_ZERO) && !(ARDUINO_SAMD_FEATHER_M0)
+bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
+#if defined(ARDUINO_SAMD_ZERO) && (_address == BNO055_ADDRESS_A)
 #error                                                                         \
     "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete this line."
   _address = BNO055_ADDRESS_B;
-#else
-  _address = BNO055_ADDRESS_A;
 #endif
 
-  return init(OPERATION_MODE_NDOF);
-}
-
-/*!
- *  @brief  Sets up the HW
- *  @param  mode
- *          mode values
- *           [OPERATION_MODE_CONFIG,
- *            OPERATION_MODE_ACCONLY,
- *            OPERATION_MODE_MAGONLY,
- *            OPERATION_MODE_GYRONLY,
- *            OPERATION_MODE_ACCMAG,
- *            OPERATION_MODE_ACCGYRO,
- *            OPERATION_MODE_MAGGYRO,
- *            OPERATION_MODE_AMG,
- *            OPERATION_MODE_IMUPLUS,
- *            OPERATION_MODE_COMPASS,
- *            OPERATION_MODE_M4G,
- *            OPERATION_MODE_NDOF_FMC_OFF,
- *            OPERATION_MODE_NDOF]
- *  @param  *theWire
- *          Wire object
- *  @return true if process is successful
- */
-bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode, uint8_t address,
-                            TwoWire *theWire) {
-  _wire = theWire;
-  _address = address;
-
-  return init(mode);
-}
-
-bool Adafruit_BNO055::init(adafruit_bno055_opmode_t mode) {
   /* Enable I2C */
   _wire->begin();
 
-  /* BNO055 clock stretches for 500us or more! */
+  // BNO055 clock stretches for 500us or more!
 #ifdef ESP8266
-  /* Allow for 1000us of clock stretching */
-<<<<<<< HEAD
-  _wire->setClockStretchLimit(1000);
-=======
-  Wire.setClockStretchLimit(1000);
->>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
+  _wire->setClockStretchLimit(1000); // Allow for 1000us of clock stretching
 #endif
 
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if (id != BNO055_ID) {
-    /* hold on for boot */
-    delay(1000);
+    delay(1000); // hold on for boot
     id = read8(BNO055_CHIP_ID_ADDR);
     if (id != BNO055_ID) {
-      /* still not? ok bail */
-      return false;
+      return false; // still not? ok bail
     }
   }
 
@@ -144,16 +107,24 @@ bool Adafruit_BNO055::init(adafruit_bno055_opmode_t mode) {
 
   write8(BNO055_PAGE_ID_ADDR, 0);
 
-  /* Set the output units
-     uint8_t unitsel = (0 << 7) | // Orientation = Android
-                       (0 << 4) | // Temperature = Celsius
-                       (0 << 2) | // Euler = Degrees
-                       (1 << 1) | // Gyro = Rads
-                       (0 << 0);  // Accelerometer = m/s^2
-     write8(BNO055_UNIT_SEL_ADDR, unitsel);
-   */
+  /* Set the output units */
+  /*
+  uint8_t unitsel = (0 << 7) | // Orientation = Android
+                    (0 << 4) | // Temperature = Celsius
+                    (0 << 2) | // Euler = Degrees
+                    (1 << 1) | // Gyro = Rads
+                    (0 << 0);  // Accelerometer = m/s^2
+  write8(BNO055_UNIT_SEL_ADDR, unitsel);
+  */
 
   /* Configure axis mapping (see section 3.4) */
+  /*
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, REMAP_CONFIG_P2); // P0-P7, Default is P1
+  delay(10);
+  write8(BNO055_AXIS_MAP_SIGN_ADDR, REMAP_SIGN_P2); // P0-P7, Default is P1
+  delay(10);
+  */
+
   write8(BNO055_SYS_TRIGGER_ADDR, 0x0);
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
