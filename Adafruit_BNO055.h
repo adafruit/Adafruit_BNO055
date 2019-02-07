@@ -22,18 +22,8 @@
 #ifndef __ADAFRUIT_BNO055_H__
 #define __ADAFRUIT_BNO055_H__
 
-#if (ARDUINO >= 100)
 #include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-#ifdef __AVR_ATtiny85__
-#include <TinyWireM.h>
-#define Wire TinyWireM
-#else
 #include <Wire.h>
-#endif
 
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
@@ -290,15 +280,12 @@ public:
     VECTOR_GRAVITY = BNO055_GRAVITY_DATA_X_LSB_ADDR
   } adafruit_vector_type_t;
 
-#if defined(ARDUINO_SAMD_ZERO) && !(ARDUINO_SAMD_FEATHER_M0)
-#error                                                                         \
-    "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete \
-         this line."
-  Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_B);
-#else
-  Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A);
-#endif
-  bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
+  Adafruit_BNO055();
+
+  bool begin();
+  bool begin(adafruit_bno055_opmode_t mode,
+             uint8_t address, TwoWire *wire);
+  bool init(adafruit_bno055_opmode_t mode);
   void setMode(adafruit_bno055_opmode_t mode);
   void setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
   void setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
@@ -330,6 +317,8 @@ private:
   bool write8(adafruit_bno055_reg_t, byte value);
 
   uint8_t _address;
+  TwoWire *_wire;
+
   int32_t _sensorID;
   adafruit_bno055_opmode_t _mode;
 };

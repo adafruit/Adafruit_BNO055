@@ -27,11 +27,7 @@
  *  MIT license, all text above must be included in any redistribution
  */
 
-#if ARDUINO >= 100
 #include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
 
 #include <limits.h>
 #include <math.h>
@@ -40,27 +36,84 @@
 
 /*!
  *  @brief  Instantiates a new Adafruit_BNO055 class
- *  @param  sensorID
- *  @param  address
  */
-Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address) {
-  _sensorID = sensorID;
-  _address = address;
+Adafruit_BNO055::Adafruit_BNO055() {}
+
+/*!
+ *  @brief  Sets up the HW
+ *  @param  mode
+ *          mode values
+ *           [OPERATION_MODE_CONFIG,
+ *            OPERATION_MODE_ACCONLY,
+ *            OPERATION_MODE_MAGONLY,
+ *            OPERATION_MODE_GYRONLY,
+ *            OPERATION_MODE_ACCMAG,
+ *            OPERATION_MODE_ACCGYRO,
+ *            OPERATION_MODE_MAGGYRO,
+ *            OPERATION_MODE_AMG,
+ *            OPERATION_MODE_IMUPLUS,
+ *            OPERATION_MODE_COMPASS,
+ *            OPERATION_MODE_M4G,
+ *            OPERATION_MODE_NDOF_FMC_OFF,
+ *            OPERATION_MODE_NDOF]
+ *  @param  *theWire
+ *          Wire object
+ *  @return true if process is successful
+ */
+bool Adafruit_BNO055::begin() {
+  _wire = &Wire;
+#if defined(ARDUINO_SAMD_ZERO) && !(ARDUINO_SAMD_FEATHER_M0)
+#error                                                                         \
+    "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete this line."
+  _address = BNO055_ADDRESS_B;
+#else
+  _address = BNO055_ADDRESS_A;
+#endif
+
+  return init(OPERATION_MODE_NDOF);
 }
 
 /*!
  *  @brief  Sets up the HW
  *  @param  mode
- *  @return true if process is sucessfull
+ *          mode values
+ *           [OPERATION_MODE_CONFIG,
+ *            OPERATION_MODE_ACCONLY,
+ *            OPERATION_MODE_MAGONLY,
+ *            OPERATION_MODE_GYRONLY,
+ *            OPERATION_MODE_ACCMAG,
+ *            OPERATION_MODE_ACCGYRO,
+ *            OPERATION_MODE_MAGGYRO,
+ *            OPERATION_MODE_AMG,
+ *            OPERATION_MODE_IMUPLUS,
+ *            OPERATION_MODE_COMPASS,
+ *            OPERATION_MODE_M4G,
+ *            OPERATION_MODE_NDOF_FMC_OFF,
+ *            OPERATION_MODE_NDOF]
+ *  @param  *theWire
+ *          Wire object
+ *  @return true if process is successful
  */
-bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
+bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode, uint8_t address,
+                            TwoWire *theWire) {
+  _wire = theWire;
+  _address = address;
+
+  return init(mode);
+}
+
+bool Adafruit_BNO055::init(adafruit_bno055_opmode_t mode) {
   /* Enable I2C */
-  Wire.begin();
+  _wire->begin();
 
   /* BNO055 clock stretches for 500us or more! */
 #ifdef ESP8266
   /* Allow for 1000us of clock stretching */
+<<<<<<< HEAD
+  _wire->setClockStretchLimit(1000);
+=======
   Wire.setClockStretchLimit(1000);
+>>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
 #endif
 
   /* Make sure we have the right device */
@@ -113,6 +166,20 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
 /*!
  *  @brief  Puts the chip in the specified operating mode
  *  @param  mode
+ *          mode values
+ *           [OPERATION_MODE_CONFIG,
+ *            OPERATION_MODE_ACCONLY,
+ *            OPERATION_MODE_MAGONLY,
+ *            OPERATION_MODE_GYRONLY,
+ *            OPERATION_MODE_ACCMAG,
+ *            OPERATION_MODE_ACCGYRO,
+ *            OPERATION_MODE_MAGGYRO,
+ *            OPERATION_MODE_AMG,
+ *            OPERATION_MODE_IMUPLUS,
+ *            OPERATION_MODE_COMPASS,
+ *            OPERATION_MODE_M4G,
+ *            OPERATION_MODE_NDOF_FMC_OFF,
+ *            OPERATION_MODE_NDOF]
  */
 void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
   _mode = mode;
@@ -123,6 +190,15 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
 /*!
  *  @brief  Changes the chip's axis remap
  *  @param  remapcode
+ *          remap code possible values
+ *          [REMAP_CONFIG_P0
+ *           REMAP_CONFIG_P1 (default)
+ *           REMAP_CONFIG_P2
+ *           REMAP_CONFIG_P3
+ *           REMAP_CONFIG_P4
+ *           REMAP_CONFIG_P5
+ *           REMAP_CONFIG_P6
+ *           REMAP_CONFIG_P7]
  */
 void Adafruit_BNO055::setAxisRemap(
     adafruit_bno055_axis_remap_config_t remapcode) {
@@ -140,6 +216,15 @@ void Adafruit_BNO055::setAxisRemap(
 /*!
  *  @brief  Changes the chip's axis signs
  *  @param  remapsign
+ *          remap sign possible values
+ *          [REMAP_SIGN_P0
+ *           REMAP_SIGN_P1 (default)
+ *           REMAP_SIGN_P2
+ *           REMAP_SIGN_P3
+ *           REMAP_SIGN_P4
+ *           REMAP_SIGN_P5
+ *           REMAP_SIGN_P6
+ *           REMAP_SIGN_P7]
  */
 void Adafruit_BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
   adafruit_bno055_opmode_t modeback = _mode;
@@ -155,7 +240,8 @@ void Adafruit_BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
 
 /*!
  *  @brief  Use the external 32.768KHz crystal
- *  @param  usextal boolean
+ *  @param  usextal
+ *          use external crystal boolean
  */
 void Adafruit_BNO055::setExtCrystalUse(boolean usextal) {
   adafruit_bno055_opmode_t modeback = _mode;
@@ -178,8 +264,11 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal) {
 /*!
  *   @brief  Gets the latest system status info
  *   @param  system_status
+ *           system status info
  *   @param  self_test_result
+ *           self test result
  *   @param  system_error
+ *           system error info
  */
 void Adafruit_BNO055::getSystemStatus(uint8_t *system_status,
                                       uint8_t *self_test_result,
@@ -235,6 +324,8 @@ void Adafruit_BNO055::getSystemStatus(uint8_t *system_status,
 
 /*!
  *  @brief  Gets the chip revision numbers
+ *  @param  info
+ *          revision info
  */
 void Adafruit_BNO055::getRevInfo(adafruit_bno055_rev_info_t *info) {
   uint8_t a, b;
@@ -262,10 +353,16 @@ void Adafruit_BNO055::getRevInfo(adafruit_bno055_rev_info_t *info) {
  *  @brief  Gets current calibration state.  Each value should be a uint8_t
  *          pointer and it will be set to 0 if not calibrated and 3 if
  *          fully calibrated.
+ *          See section 34.3.54
  *  @param  sys
+ *          Current system calibration status, depends on status of all sensors,
+ * read-only
  *  @param  gyro
+ *          Current calibration status of Gyroscope, read-only
  *  @param  accel
+ *          Current calibration status of Accelerometer, read-only
  *  @param  mag
+ *          Current calibration status of Magnetometer, read-only
  */
 void Adafruit_BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
                                      uint8_t *accel, uint8_t *mag) {
@@ -296,6 +393,13 @@ int8_t Adafruit_BNO055::getTemp() {
 /*!
  *  @brief   Gets a vector reading from the specified source
  *  @param   vector_type
+ *           possible vector type values
+ *           [VECTOR_ACCELEROMETER
+ *            VECTOR_MAGNETOMETER
+ *            VECTOR_GYROSCOPE
+ *            VECTOR_EULER
+ *            VECTOR_LINEARACCEL
+ *            VECTOR_GRAVITY]
  *  @return  vector from specified source
  */
 imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
@@ -501,8 +605,13 @@ bool Adafruit_BNO055::getSensorOffsets(
 
 /*!
  *  @brief  Writes an array of calibration values to the sensor's offset
+<<<<<<< HEAD
+ * registers
+=======
  *          registers
+>>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
  *  @param  calibData
+ *          calibration data
  */
 void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
   adafruit_bno055_opmode_t lastMode = _mode;
@@ -548,6 +657,22 @@ void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
 /*!
  *  @brief  Writes to the sensor's offset registers from an offset struct
  *  @param  offsets_type
+<<<<<<< HEAD
+ *          accel_offset_x = acceleration offset x
+ *          accel_offset_y = acceleration offset y
+ *          accel_offset_z = acceleration offset z
+ *
+ *          mag_offset_x   = magnetometer offset x
+ *          mag_offset_y   = magnetometer offset y
+ *          mag_offset_z   = magnetometer offset z
+ *
+ *          gyro_offset_x  = gyroscrope offset x
+ *          gyro_offset_y  = gyroscrope offset y
+ *          gyro_offset_z  = gyroscrope offset z
+ *
+ *
+=======
+>>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
  */
 void Adafruit_BNO055::setSensorOffsets(
     const adafruit_bno055_offsets_t &offsets_type) {
@@ -606,15 +731,15 @@ bool Adafruit_BNO055::isFullyCalibrated() {
  *  @brief  Writes an 8 bit value over I2C
  */
 bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value) {
-  Wire.beginTransmission(_address);
+  _wire->beginTransmission(_address);
 #if ARDUINO >= 100
-  Wire.write((uint8_t)reg);
-  Wire.write((uint8_t)value);
+  _wire->write((uint8_t)reg);
+  _wire->write((uint8_t)value);
 #else
-  Wire.send(reg);
-  Wire.send(value);
+  _wire->send(reg);
+  _wire->send(value);
 #endif
-  Wire.endTransmission();
+  _wire->endTransmission();
 
   /* ToDo: Check for error! */
   return true;
@@ -626,18 +751,18 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value) {
 byte Adafruit_BNO055::read8(adafruit_bno055_reg_t reg) {
   byte value = 0;
 
-  Wire.beginTransmission(_address);
+  _wire->beginTransmission(_address);
 #if ARDUINO >= 100
-  Wire.write((uint8_t)reg);
+  _wire->write((uint8_t)reg);
 #else
-  Wire.send(reg);
+  _wire->send(reg);
 #endif
-  Wire.endTransmission();
-  Wire.requestFrom(_address, (byte)1);
+  _wire->endTransmission();
+  _wire->requestFrom(_address, (byte)1);
 #if ARDUINO >= 100
-  value = Wire.read();
+  value = _wire->read();
 #else
-  value = Wire.receive();
+  value = _wire->receive();
 #endif
 
   return value;
@@ -648,20 +773,20 @@ byte Adafruit_BNO055::read8(adafruit_bno055_reg_t reg) {
  */
 bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte *buffer,
                               uint8_t len) {
-  Wire.beginTransmission(_address);
+  _wire->beginTransmission(_address);
 #if ARDUINO >= 100
-  Wire.write((uint8_t)reg);
+  _wire->write((uint8_t)reg);
 #else
-  Wire.send(reg);
+  _wire->send(reg);
 #endif
-  Wire.endTransmission();
-  Wire.requestFrom(_address, (byte)len);
+  _wire->endTransmission();
+  _wire->requestFrom(_address, (byte)len);
 
   for (uint8_t i = 0; i < len; i++) {
 #if ARDUINO >= 100
-    buffer[i] = Wire.read();
+    buffer[i] = _wire->read();
 #else
-    buffer[i] = Wire.receive();
+    buffer[i] = _wire->receive();
 #endif
   }
 
