@@ -40,6 +40,8 @@
  *          sensor ID
  *  @param  address
  *          i2c address
+ *  @param  *theWire
+ *          Wire object
  */
 Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
                                  TwoWire *theWire) {
@@ -517,6 +519,7 @@ bool Adafruit_BNO055::getSensorOffsets(uint8_t *calibData) {
 /*!
  *  @brief  Reads the sensor's offset registers into an offset struct
  *  @param  offsets_type
+ *          type of offsets
  *  @return true if read is successful
  */
 bool Adafruit_BNO055::getSensorOffsets(
@@ -576,12 +579,7 @@ bool Adafruit_BNO055::getSensorOffsets(
 
 /*!
  *  @brief  Writes an array of calibration values to the sensor's offset
-<<<<<<< HEAD
- * registers
-=======
- *          registers
->>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
- *  @param  calibData
+ *  @param  *calibData
  *          calibration data
  */
 void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
@@ -628,7 +626,6 @@ void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
 /*!
  *  @brief  Writes to the sensor's offset registers from an offset struct
  *  @param  offsets_type
-<<<<<<< HEAD
  *          accel_offset_x = acceleration offset x
  *          accel_offset_y = acceleration offset y
  *          accel_offset_z = acceleration offset z
@@ -640,10 +637,6 @@ void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
  *          gyro_offset_x  = gyroscrope offset x
  *          gyro_offset_y  = gyroscrope offset y
  *          gyro_offset_z  = gyroscrope offset z
- *
- *
-=======
->>>>>>> 75f03d2e1fd440e7febc0de8c47a52bab09c51b0
  */
 void Adafruit_BNO055::setSensorOffsets(
     const adafruit_bno055_offsets_t &offsets_type) {
