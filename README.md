@@ -1,4 +1,4 @@
-# Adafruit Unified BNO055 Driver (AHRS/Orientation)  [![Build Status](https://travis-ci.com/adafruit/Adafruit_BNO055.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_BNO055)
+Adafruit Unified BNO055 Driver (AHRS/Orientation)  [![Build Status](https://travis-ci.com/adafruit/Adafruit_BNO055.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_BNO055)
 ================
 
 <a href="https://www.adafruit.com/product/2472"><img src="assets/board.jpg?raw=true" width="500px"></a>
