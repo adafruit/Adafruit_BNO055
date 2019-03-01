@@ -1,9 +1,13 @@
 # Adafruit Unified BNO055 Driver (AHRS/Orientation)  [![Build Status](https://travis-ci.com/adafruit/Adafruit_BNO055.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_BNO055)
+================
 
-This driver is for the Adafruit BNO055 Breakout (http://www.adafruit.com/products/2472),
-and is based on Adafruit's Unified Sensor Library (Adafruit_Sensor).
+<a href="https://www.adafruit.com/product/2472"><img src="assets/board.jpg?raw=true" width="500px"></a>
 
-To work with the Arduino Zero, the BNO055's ADR pin must be high, and an "#error" must be removed from the .h file.
+This driver is for the Adafruit BNO055 Breakout, and is based on Adafruit's Unified Sensor Library (Adafruit_Sensor).
+
+Tested and works great with the Adafruit Si4713 Breakout Board 
+To work with the Arduino Zero, the BNO055's ADR pin must be high.
+* http://www.adafruit.com/products/2472
 
 ## What is the Adafruit Unified Sensor Library? ##
 
@@ -19,8 +23,10 @@ This is imporant useful for two reasons:
 
 Light sensors will always report units in lux, gyroscopes will always report units in rad/s, etc. ... freeing you up to focus on the data, rather than digging through the datasheet to understand what the sensor's raw numbers really mean.
 
-## About this Driver ##
-
 Adafruit invests time and resources providing this open source code.  Please support Adafruit and open-source hardware by purchasing products from Adafruit!
 
-Written by Kevin (KTOWN) Townsend for Adafruit Industries.
+Kevin (KTOWN) Townsend Adafruit Industries.
+MIT license, check license.txt for more information
+All text above must be included in any redistribution
+
+To install, use the Arduino Library Manager and search for "Adafruit BNO055" and install the library.
