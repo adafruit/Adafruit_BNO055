@@ -86,9 +86,9 @@ void loop(void)
   Serial.print("qW: ");
   Serial.print(quat.w(), 4);
   Serial.print(" qX: ");
-  Serial.print(quat.y(), 4);
-  Serial.print(" qY: ");
   Serial.print(quat.x(), 4);
+  Serial.print(" qY: ");
+  Serial.print(quat.y(), 4);
   Serial.print(" qZ: ");
   Serial.print(quat.z(), 4);
   Serial.print("\t\t");
