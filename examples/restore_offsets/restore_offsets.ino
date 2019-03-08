@@ -204,11 +204,12 @@ void setup(void)
     /* Optional: Display current status */
     displaySensorStatus();
 
-   //Crystal must be configured AFTER loading calibration data into BNO055.
+   /* Crystal must be configured AFTER loading calibration data into BNO055. */
     bno.setExtCrystalUse(true);
 
     sensors_event_t event;
     bno.getEvent(&event);
+    /* always recal the mag as It goes out of calibration very often */
     if (foundCalib){
         Serial.println("Move sensor slightly to calibrate magnetometers");
         while (!bno.isFullyCalibrated())
