@@ -38,6 +38,11 @@
 /** Offsets registers **/
 #define NUM_BNO055_OFFSET_REGISTERS (22)
 
+
+#define BNO055_ACC_PWRMODE_NORMAL (0)
+#define BNO055_ACC_BW_125_HZ (4)
+#define BNO055_ACC_CONFIG_16G (3)
+
 /** A structure to represent offsets **/
 typedef struct {
   int16_t accel_offset_x; /**< x acceleration offset */
@@ -211,6 +216,10 @@ public:
     ACCEL_RADIUS_MSB_ADDR = 0X68,
     MAG_RADIUS_LSB_ADDR = 0X69,
     MAG_RADIUS_MSB_ADDR = 0X6A
+      
+    /* Accelerometer Config Register */
+    ACC_CONFIG = 0x08
+      
   } adafruit_bno055_reg_t;
 
   /** BNO055 power settings */
@@ -313,6 +322,9 @@ public:
   /* Power managments functions */
   void enterSuspendMode();
   void enterNormalMode();
+  
+  /* Enabled 16G Mode */
+  void setAccelConfig16G();
 
 private:
   byte read8(adafruit_bno055_reg_t);
