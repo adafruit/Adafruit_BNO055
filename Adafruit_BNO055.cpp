@@ -235,6 +235,50 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal) {
   delay(20);
 }
 
+
+
+// This function will set the accelerometer configuration to 16G
+void Adafruit_BNO055::setAccelConfig16G()
+{
+    adafruit_bno055_opmode_t modeback = _mode;
+    
+    setMode(OPERATION_MODE_CONFIG);
+    delay(250);
+    
+    write8(BNO055_PAGE_ID_ADDR, 1);
+    delay(500);
+    
+    uint8_t acc_config_16G = (uint8_t)((BNO055_ACC_PWRMODE_NORMAL << 5)
+                                       | (BNO055_ACC_BW_125_HZ << 2)
+                                       | BNO055_ACC_CONFIG_16G);
+   /* Serial.print("AMG Config: ");
+    Serial.println(acc_config_16G);
+    Serial.print("Swtiching back to: ");
+    Serial.println(modeback);*/
+    
+    // Configure the accelerometer to 16G
+    
+    write8(ACC_CONFIG, acc_config_16G);
+    delay(500);
+    
+    
+    /*Serial.print("We're on page: ");
+    Serial.println(read8(BNO055_PAGE_ID_ADDR));
+    byte regout;
+    regout = read8(ACC_CONFIG);
+    Serial.print("Reading config back: ");
+    Serial.println(regout);*/
+    
+    write8(BNO055_PAGE_ID_ADDR, 0);
+    
+    setMode(modeback);
+    delay(20);
+    
+    
+
+}
+
+
 /*!
  *   @brief  Gets the latest system status info
  *   @param  system_status
