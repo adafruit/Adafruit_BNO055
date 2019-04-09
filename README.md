@@ -1,7 +1,17 @@
 ## Modified driver ##
 Added function to BNO object, simply call bno.setAccelConfig16G()
 Must ensure BNO is not in fusion mode, as that will limit output to 4G (~39), you probably want AMG (accelerometer, gyro, mag) mode 
-================
+
+
+---
+
+
+
+
+
+
+
+
 Adafruit Unified BNO055 Driver (AHRS/Orientation)  [![Build Status](https://travis-ci.com/DavidoRotho/Adafruit_BNO055.svg?branch=master)](https://travis-ci.com/DavidoRotho/Adafruit_BNO055)
 ================
 
