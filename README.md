@@ -3,7 +3,7 @@ Added function to BNO object, simply call bno.setAccelConfig16G()
 Must ensure BNO is not in fusion mode, as that will limit output to 4G (~39), you probably want AMG (accelerometer, gyro, mag) mode 
 
 ================
-================
+
 
 
 
