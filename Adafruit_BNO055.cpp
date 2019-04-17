@@ -529,7 +529,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   imu::Vector<3> vec;
   if (vec_type == Adafruit_BNO055::VECTOR_LINEARACCEL)
   {
-    event->type = SENSOR_TYPE_ACCELEROMETER;
+    event->type = SENSOR_TYPE_LINEAR_ACCELERATION;
     vec = getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     event->acceleration.x = vec.x();
