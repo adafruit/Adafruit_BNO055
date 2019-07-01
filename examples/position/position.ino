@@ -15,7 +15,7 @@ double DEG_2_RAD = 0.01745329251; //trig functions require radians, BNO055 outpu
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
+Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 void setup(void)
 {
