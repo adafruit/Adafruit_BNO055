@@ -17,9 +17,9 @@
 
    Connections
    ===========
-   Connect SCL to analog 5
-   Connect SDA to analog 4
-   Connect VDD to 3-5V DC
+   Connect SCL to SCL pin (analog 5 on Arduino UNO)
+   Connect SDA to SDA pin (analog 4 on Arduino UNO)
+   Connect VDD to 3-5V DC (depending on your board's logic level)
    Connect GROUND to common ground
 
    History
