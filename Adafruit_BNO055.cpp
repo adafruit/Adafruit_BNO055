@@ -40,7 +40,7 @@
  *          sensor ID
  *  @param  address
  *          i2c address
- *  @param  *theWire
+ *  @param  theWire
  *          Wire object
  */
 Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
@@ -471,6 +471,7 @@ imu::Quaternion Adafruit_BNO055::getQuat() {
 /*!
  *  @brief  Provides the sensor_t data for this sensor
  *  @param  sensor
+ *          Sensor description
  */
 void Adafruit_BNO055::getSensor(sensor_t *sensor) {
   /* Clear the sensor_t object */
@@ -491,6 +492,7 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor) {
 /*!
  *  @brief  Reads the sensor and returns the data as a sensors_event_t
  *  @param  event
+ *          Event description
  *  @return always returns true
  */
 bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
@@ -514,6 +516,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
 /*!
  *  @brief  Reads the sensor and returns the data as a sensors_event_t
  *  @param  event
+ *          Event description
  *  @param  vec_type
  *          specify the type of reading
  *  @return always returns true
@@ -592,6 +595,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
 /*!
  *  @brief  Reads the sensor's offset registers into a byte array
  *  @param  calibData
+ *          Calibration offset (buffer size should be 22)
  *  @return true if read is successful
  */
 bool Adafruit_BNO055::getSensorOffsets(uint8_t *calibData) {
@@ -670,7 +674,7 @@ bool Adafruit_BNO055::getSensorOffsets(
 
 /*!
  *  @brief  Writes an array of calibration values to the sensor's offset
- *  @param  *calibData
+ *  @param  calibData
  *          calibration data
  */
 void Adafruit_BNO055::setSensorOffsets(const uint8_t *calibData) {
