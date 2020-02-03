@@ -845,10 +845,7 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value) {
   _wire->send(reg);
   _wire->send(value);
 #endif
-  _wire->endTransmission();
-
-  /* ToDo: Check for error! */
-  return true;
+  return _wire->endTransmission() == 0;
 }
 
 /*!
@@ -885,8 +882,13 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte *buffer,
 #else
   _wire->send(reg);
 #endif
-  _wire->endTransmission();
-  _wire->requestFrom(_address, (byte)len);
+  if (_wire->endTransmission() != 0) {
+    return false;
+  }
+  uint8_t readLength = _wire->requestFrom(_address, len);
+  if (readLength != len) {
+    return false;
+  }
 
   for (uint8_t i = 0; i < len; i++) {
 #if ARDUINO >= 100
