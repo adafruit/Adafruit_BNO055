@@ -26,7 +26,7 @@
 #include <Wire.h>
 
 #include <Adafruit_Sensor.h>
-#include <utility/imumaths.h>
+#include "utility/imumaths.h"
 
 /** BNO055 Address A **/
 #define BNO055_ADDRESS_A (0x28)
