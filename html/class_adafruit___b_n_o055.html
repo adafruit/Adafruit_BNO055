@@ -490,7 +490,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">sensorID</td><td>sensor ID </td></tr>
     <tr><td class="paramname">address</td><td>i2c address </td></tr>
-    <tr><td class="paramname">*theWire</td><td>Wire object </td></tr>
+    <tr><td class="paramname">theWire</td><td>Wire object </td></tr>
   </table>
   </dd>
 </dl>
@@ -838,7 +838,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Reads the sensor and returns the data as a sensors_event_t. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">event</td><td></td></tr>
+    <tr><td class="paramname">event</td><td>Event description </td></tr>
   </table>
   </dd>
 </dl>
@@ -875,7 +875,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Reads the sensor and returns the data as a sensors_event_t. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">event</td><td></td></tr>
+    <tr><td class="paramname">event</td><td>Event description </td></tr>
     <tr><td class="paramname">vec_type</td><td>specify the type of reading </td></tr>
   </table>
   </dd>
@@ -903,7 +903,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Provides the sensor_t data for this sensor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sensor</td><td></td></tr>
+    <tr><td class="paramname">sensor</td><td>Sensor description </td></tr>
   </table>
   </dd>
 </dl>
@@ -929,7 +929,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Reads the sensor's offset registers into a byte array. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">calibData</td><td></td></tr>
+    <tr><td class="paramname">calibData</td><td>Calibration offset (buffer size should be 22) </td></tr>
   </table>
   </dd>
 </dl>
@@ -983,7 +983,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Writes an array of calibration values to the sensor's offset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">*calibData</td><td>calibration data </td></tr>
+    <tr><td class="paramname">calibData</td><td>calibration data </td></tr>
   </table>
   </dd>
 </dl>
