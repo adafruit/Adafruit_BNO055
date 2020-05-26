@@ -521,8 +521,8 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
  *          specify the type of reading
  *  @return always returns true
  */
-bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t vec_type)
-{
+bool Adafruit_BNO055::getEvent(sensors_event_t *event,
+                               adafruit_vector_type_t vec_type) {
   /* Clear the event */
   memset(event, 0, sizeof(sensors_event_t));
 
@@ -530,55 +530,44 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   event->sensor_id = _sensorID;
   event->timestamp = millis();
 
-  //read the data according to vec_type
+  // read the data according to vec_type
   imu::Vector<3> vec;
-  if (vec_type == Adafruit_BNO055::VECTOR_LINEARACCEL)
-  {
+  if (vec_type == Adafruit_BNO055::VECTOR_LINEARACCEL) {
     event->type = SENSOR_TYPE_LINEAR_ACCELERATION;
     vec = getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     event->acceleration.x = vec.x();
     event->acceleration.y = vec.y();
     event->acceleration.z = vec.z();
-  }
-  else if (vec_type == Adafruit_BNO055::VECTOR_ACCELEROMETER)
-  {
+  } else if (vec_type == Adafruit_BNO055::VECTOR_ACCELEROMETER) {
     event->type = SENSOR_TYPE_ACCELEROMETER;
     vec = getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
     event->acceleration.x = vec.x();
     event->acceleration.y = vec.y();
     event->acceleration.z = vec.z();
-  }
-  else if (vec_type == Adafruit_BNO055::VECTOR_GRAVITY)
-  {
+  } else if (vec_type == Adafruit_BNO055::VECTOR_GRAVITY) {
     event->type = SENSOR_TYPE_ACCELEROMETER;
     vec = getVector(Adafruit_BNO055::VECTOR_GRAVITY);
 
     event->acceleration.x = vec.x();
     event->acceleration.y = vec.y();
     event->acceleration.z = vec.z();
-  }
-  else if (vec_type == Adafruit_BNO055::VECTOR_EULER)
-  {
+  } else if (vec_type == Adafruit_BNO055::VECTOR_EULER) {
     event->type = SENSOR_TYPE_ORIENTATION;
     vec = getVector(Adafruit_BNO055::VECTOR_EULER);
 
     event->orientation.x = vec.x();
     event->orientation.y = vec.y();
     event->orientation.z = vec.z();
-  }
-  else if (vec_type == Adafruit_BNO055::VECTOR_GYROSCOPE)
-  {
+  } else if (vec_type == Adafruit_BNO055::VECTOR_GYROSCOPE) {
     event->type = SENSOR_TYPE_ROTATION_VECTOR;
     vec = getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
     event->gyro.x = vec.x();
     event->gyro.y = vec.y();
     event->gyro.z = vec.z();
-  }
-  else if (vec_type == Adafruit_BNO055::VECTOR_MAGNETOMETER)
-  {
+  } else if (vec_type == Adafruit_BNO055::VECTOR_MAGNETOMETER) {
     event->type = SENSOR_TYPE_MAGNETIC_FIELD;
     vec = getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
 
@@ -586,11 +575,9 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
     event->magnetic.y = vec.y();
     event->magnetic.z = vec.z();
   }
-  
 
   return true;
 }
-
 
 /*!
  *  @brief  Reads the sensor's offset registers into a byte array
