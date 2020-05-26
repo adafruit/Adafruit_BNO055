@@ -1,7 +1,7 @@
 /*
     Inertial Measurement Unit Maths Library
     Copyright (C) 2013-2014  Samuel Cowen
-	www.camelsoftware.com
+        www.camelsoftware.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,11 +20,8 @@
 #ifndef IMUMATH_H
 #define IMUMATH_H
 
-
-#include "vector.h"
 #include "matrix.h"
 #include "quaternion.h"
-
+#include "vector.h"
 
 #endif
-
