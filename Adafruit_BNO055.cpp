@@ -460,7 +460,7 @@ imu::Quaternion Adafruit_BNO055::getQuat() {
   /*!
    * Assign to Quaternion
    * See
-   * http://ae-bst.resource.bosch.com/media/products/dokumente/bno055/BST_BNO055_DS000_12~1.pdf
+   * https://cdn-shop.adafruit.com/datasheets/BST_BNO055_DS000_12.pdf
    * 3.6.5.5 Orientation (Quaternion)
    */
   const double scale = (1.0 / (1 << 14));
