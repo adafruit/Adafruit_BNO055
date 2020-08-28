@@ -74,7 +74,7 @@ void printEvent(sensors_event_t* event) {
   Serial.println();
   Serial.print(event->type);
   double x = -1000000, y = -1000000 , z = -1000000; //dumb values, easy to spot problem
-  if (event->type == SENSOR_TYPE_ACCELEROMETER) {
+  if ((event->type == SENSOR_TYPE_ACCELEROMETER) || (event->type == SENSOR_TYPE_LINEAR_ACCELERATION)) {
     x = event->acceleration.x;
     y = event->acceleration.y;
     z = event->acceleration.z;
