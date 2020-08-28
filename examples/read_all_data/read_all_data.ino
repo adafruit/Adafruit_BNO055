@@ -53,14 +53,9 @@ void setup(void)
 void loop(void)
 {
   //could add VECTOR_ACCELEROMETER, VECTOR_MAGNETOMETER,VECTOR_GRAVITY...
-  sensors_event_t orientationData , angVelocityData , linearAccelData;
-  bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
-  bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
-  bno.getEvent(&linearAccelData, Adafruit_BNO055::VECTOR_LINEARACCEL);
-
-  printEvent(&orientationData);
-  printEvent(&angVelocityData);
-  printEvent(&linearAccelData);
+  printEvent(Adafruit_BNO055::VECTOR_EULER);
+  printEvent(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  printEvent(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   int8_t boardTemp = bno.getTemp();
   Serial.println();
@@ -71,36 +66,39 @@ void loop(void)
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }
 
-void printEvent(sensors_event_t* event) {
+void printEvent(Adafruit_BNO055::adafruit_vector_type_t vectorType) {
+  sensors_event_t event;
+  bno.getEvent(&event, vectorType);
+  sensors_event_t orientationData , angVelocityData , linearAccelData;
   double x = -1000000, y = -1000000 , z = -1000000; //dumb values, easy to spot problem
-  if (event->type == SENSOR_TYPE_ACCELEROMETER) {
+  if (event.type == SENSOR_TYPE_ACCELEROMETER) {
     Serial.print("Accl:");
-    x = event->acceleration.x;
-    y = event->acceleration.y;
-    z = event->acceleration.z;
+    x = event.acceleration.x;
+    y = event.acceleration.y;
+    z = event.acceleration.z;
   }
-  else if (event->type == SENSOR_TYPE_ORIENTATION) {
+  else if (event.type == SENSOR_TYPE_ORIENTATION) {
     Serial.print("Orient:");
-    x = event->orientation.x;
-    y = event->orientation.y;
-    z = event->orientation.z;
+    x = event.orientation.x;
+    y = event.orientation.y;
+    z = event.orientation.z;
   }
-  else if (event->type == SENSOR_TYPE_MAGNETIC_FIELD) {
+  else if (event.type == SENSOR_TYPE_MAGNETIC_FIELD) {
     Serial.print("Mag:");
-    x = event->magnetic.x;
-    y = event->magnetic.y;
-    z = event->magnetic.z;
+    x = event.magnetic.x;
+    y = event.magnetic.y;
+    z = event.magnetic.z;
   }
-  else if (event->type == SENSOR_TYPE_GYROSCOPE) {
+  else if (event.type == SENSOR_TYPE_GYROSCOPE) {
     Serial.print("Gyro:");
-    x = event->gyro.x;
-    y = event->gyro.y;
-    z = event->gyro.z;
-  } else if (event->type == SENSOR_TYPE_ROTATION_VECTOR) {
+    x = event.gyro.x;
+    y = event.gyro.y;
+    z = event.gyro.z;
+  } else if (event.type == SENSOR_TYPE_ROTATION_VECTOR) {
     Serial.print("Rot:");
-    x = event->gyro.x;
-    y = event->gyro.y;
-    z = event->gyro.z;
+    x = event.gyro.x;
+    y = event.gyro.y;
+    z = event.gyro.z;
   } else {
     Serial.print("Unk:");
   }
