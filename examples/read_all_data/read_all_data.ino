@@ -105,9 +105,9 @@ void printEvent(sensors_event_t* event) {
   }
   else if (event->type == SENSOR_TYPE_LINEAR_ACCELERATION) {
     Serial.print("Linear:");
-    x = event->gyro.x;
-    y = event->gyro.y;
-    z = event->gyro.z;
+    x = event->acceleration.x;
+    y = event->acceleration.y;
+    z = event->acceleration.z;
   }
   else {
     Serial.print("Unk:");
