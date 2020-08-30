@@ -108,12 +108,20 @@ void printEvent(sensors_event_t* event) {
     x = event->gyro.x;
     y = event->gyro.y;
     z = event->gyro.z;
-  } else if (event->type == SENSOR_TYPE_ROTATION_VECTOR) {
+  }
+  else if (event->type == SENSOR_TYPE_ROTATION_VECTOR) {
     Serial.print("Rot:");
     x = event->gyro.x;
     y = event->gyro.y;
     z = event->gyro.z;
-  } else {
+  }
+  else if (event->type == SENSOR_TYPE_LINEAR_ACCELERATION) {
+    Serial.print("Linear:");
+    x = event->acceleration.x;
+    y = event->acceleration.y;
+    z = event->acceleration.z;
+  }
+  else {
     Serial.print("Unk:");
   }
 
