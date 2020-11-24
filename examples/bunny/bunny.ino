@@ -45,7 +45,7 @@ void displaySensorDetails(void)
   sensor_t sensor;
   bno.getSensor(&sensor);
   Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+  Serial.print  ("Sensor:       "); Serial.println(sensor.neme);
   Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
   Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
   Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
