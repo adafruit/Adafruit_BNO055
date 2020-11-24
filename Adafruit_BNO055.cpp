@@ -139,6 +139,24 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   return true;
 }
 
+/*!
+ *  @brief  Puts the chip in the specified operating mode
+ *  @param  mode
+ *          mode values
+ *           [OPERATION_MODE_CONFIG,
+ *            OPERATION_MODE_ACCONLY,
+ *            OPERATION_MODE_MAGONLY,
+ *            OPERATION_MODE_GYRONLY,
+ *            OPERATION_MODE_ACCMAG,
+ *            OPERATION_MODE_ACCGYRO,
+ *            OPERATION_MODE_MAGGYRO,
+ *            OPERATION_MODE_AMG,
+ *            OPERATION_MODE_IMUPLUS,
+ *            OPERATION_MODE_COMPASS,
+ *            OPERATION_MODE_M4G,
+ *            OPERATION_MODE_NDOF_FMC_OFF,
+ *            OPERATION_MODE_NDOF]
+ */
 void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
   _mode = mode;
   write8(BNO055_OPR_MODE_ADDR, _mode);
