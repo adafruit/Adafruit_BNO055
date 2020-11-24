@@ -139,7 +139,6 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   return true;
 }
 
-
 void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
   _mode = mode;
   write8(BNO055_OPR_MODE_ADDR, _mode);
