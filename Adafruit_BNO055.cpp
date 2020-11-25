@@ -7,7 +7,7 @@
  *
  *  This is a library for the BNO055 orientation sensor
  *
- *  Designed specifically to work with the Adafruit BNO055 Breakout.
+ *  Designed specifically to work with the Adafruit BNO055 9-DOF Breakout.
  *
  *  Pick one up today in the adafruit shop!
  *  ------> https://www.adafruit.com/product/2472
