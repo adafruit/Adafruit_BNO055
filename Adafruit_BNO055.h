@@ -149,7 +149,6 @@ public:
 
     /* Unit selection register */
     BNO055_UNIT_SEL_ADDR = 0X3B,
-    BNO055_DATA_SELECT_ADDR = 0X3C,
 
     /* Mode registers */
     BNO055_OPR_MODE_ADDR = 0X3D,
