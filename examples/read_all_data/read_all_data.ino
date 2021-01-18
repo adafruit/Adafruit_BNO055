@@ -1,7 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
    which provides a common 'type' for sensor data and some helper functions.
@@ -138,5 +137,3 @@ void printEvent(sensors_event_t* event) {
   Serial.print(" |\tz= ");
   Serial.println(z);
 }
-
-

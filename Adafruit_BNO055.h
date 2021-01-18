@@ -25,7 +25,7 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-#include "utility/imumaths.h"
+#include "imu.h"
 #include <Adafruit_Sensor.h>
 
 /** BNO055 Address A **/
@@ -294,7 +294,7 @@ public:
   void getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
-  imu::Vector<3> getVector(adafruit_vector_type_t vector_type);
+  imu::Vector getVector(adafruit_vector_type_t vector_type);
   imu::Quaternion getQuat();
   int8_t getTemp();
 

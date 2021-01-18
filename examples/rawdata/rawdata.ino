@@ -1,7 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
 
 /* This driver reads raw data from the BNO055
 
@@ -15,6 +14,7 @@
    History
    =======
    2015/MAR/03  - First release (KTOWN)
+   2021/Jan/18  - Modified Vector code (Walchko)
 */
 
 /* Set the delay between fresh samples */
@@ -71,15 +71,15 @@ void loop(void)
   // - VECTOR_EULER         - degrees
   // - VECTOR_LINEARACCEL   - m/s^2
   // - VECTOR_GRAVITY       - m/s^2
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  imu::Vector euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
   /* Display the floating point data */
   Serial.print("X: ");
-  Serial.print(euler.x());
+  Serial.print(euler.x);
   Serial.print(" Y: ");
-  Serial.print(euler.y());
+  Serial.print(euler.y);
   Serial.print(" Z: ");
-  Serial.print(euler.z());
+  Serial.print(euler.z);
   Serial.print("\t\t");
 
   /*
