@@ -121,13 +121,13 @@ void loop(void)
   imu::Quaternion quat = bno.getQuat();
 
   Serial.print(F("Quaternion: "));
-  Serial.print((float)quat.w());
+  Serial.print((float)quat.w);
   Serial.print(F(", "));
-  Serial.print((float)quat.x());
+  Serial.print((float)quat.x);
   Serial.print(F(", "));
-  Serial.print((float)quat.y());
+  Serial.print((float)quat.y);
   Serial.print(F(", "));
-  Serial.print((float)quat.z());
+  Serial.print((float)quat.z);
   Serial.println(F(""));
 
   /* Also send calibration data for each sensor. */
