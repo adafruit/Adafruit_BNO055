@@ -27,18 +27,17 @@ namespace imu {
 
 class Quaternion {
 public:
-  Quaternion(): w(1.0), x(0.0), y(0.0), z(0.0) {}
+  Quaternion() : w(1.0), x(0.0), y(0.0), z(0.0) {}
 
   Quaternion(double ww, double xx, double yy, double zz)
       : w(ww), x(xx), y(yy), z(zz) {}
 
-  double magnitude() const {
-    return sqrt(w * w + x * x + y * y + z * z);
-  }
+  double magnitude() const { return sqrt(w * w + x * x + y * y + z * z); }
 
   void normalize() {
     double mag = magnitude();
-    if (mag < 1e-10) return;
+    if (mag < 1e-10)
+      return;
     double inv = 1.0 / mag;
     w *= inv;
     x *= inv;
@@ -51,11 +50,10 @@ public:
 
 class Vector {
 public:
-    Vector(): x(0.0), y(0.0), z(0.0) {}
-    Vector(double xx, double yy, double zz): x(xx), y(yy), z(zz) {}
+  Vector() : x(0.0), y(0.0), z(0.0) {}
+  Vector(double xx, double yy, double zz) : x(xx), y(yy), z(zz) {}
 
-    double x,y,z;
+  double x, y, z;
 };
 
-
-}; // end imu namespace
+}; // namespace imu
