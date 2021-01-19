@@ -1,5 +1,5 @@
 /*!
- *  @file Adafruit_BNO055.h
+ *  @file imu.h
  *
  *  This is a library for the BNO055 orientation sensor
  *
@@ -25,15 +25,37 @@
 
 namespace imu {
 
+/*!
+ *  @brief  Class that stores orientation information in it
+ */
 class Quaternion {
 public:
+  /*!
+   *  @brief  Instantiates a new Quaternion class to the identity
+   */
   Quaternion() : w(1.0), x(0.0), y(0.0), z(0.0) {}
 
+  /*!
+   *  @brief  Instantiates a new Quaternion class
+   *  @param  ww
+   *          real component
+   *  @param  xx
+   *          imaginary x
+   *  @param  yy
+   *          imaginary y
+   *  @param  zz
+   *          imaginary z
+   */
   Quaternion(double ww, double xx, double yy, double zz)
       : w(ww), x(xx), y(yy), z(zz) {}
 
+  /*!
+   *  @brief  Calculates magnitude
+   */
   double magnitude() const { return sqrt(w * w + x * x + y * y + z * z); }
-
+  /*!
+   *  @brief  Normalizes the quaternion
+   */
   void normalize() {
     double mag = magnitude();
     if (mag < 1e-10)
@@ -48,9 +70,25 @@ public:
   double w, x, y, z;
 };
 
+/*!
+ *  @brief  Class that stores vector information in it
+ */
 class Vector {
 public:
+  /*!
+   *  @brief  Instantiates a new Vector class to (0,0,0)
+   */
   Vector() : x(0.0), y(0.0), z(0.0) {}
+
+  /*!
+   *  @brief  Instantiates a new Vector class to (0,0,0)
+   *  @param  xx
+   *          x
+   *  @param  yy
+   *          y
+   *  @param  zz
+   *          z
+   */
   Vector(double xx, double yy, double zz) : x(xx), y(yy), z(zz) {}
 
   double x, y, z;
