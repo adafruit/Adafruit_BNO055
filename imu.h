@@ -51,6 +51,7 @@ public:
 
   /*!
    *  @brief  Calculates magnitude
+   *  @return magnitude of quaternion
    */
   double magnitude() const { return sqrt(w * w + x * x + y * y + z * z); }
   /*!
@@ -67,7 +68,10 @@ public:
     z *= inv;
   }
 
-  double w, x, y, z;
+  double w; /*!< real */
+  double x; /*!< x */
+  double y; /*!< y */
+  double z; /*!< z */
 };
 
 /*!
@@ -91,7 +95,9 @@ public:
    */
   Vector(double xx, double yy, double zz) : x(xx), y(yy), z(zz) {}
 
-  double x, y, z;
+  double x; /*!< x */
+  double y; /*!< y */
+  double z; /*!< z */
 };
 
 }; // namespace imu
