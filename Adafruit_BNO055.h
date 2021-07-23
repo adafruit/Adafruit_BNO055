@@ -38,7 +38,7 @@
 /** Offsets registers **/
 #define NUM_BNO055_OFFSET_REGISTERS (22)
 
-
+/** Accelerometer config values **/
 #define BNO055_ACC_PWRMODE_NORMAL (0)
 #define BNO055_ACC_BW_125_HZ (4)
 #define BNO055_ACC_CONFIG_16G (3)
@@ -203,7 +203,7 @@ public:
     MAG_OFFSET_Z_LSB_ADDR = 0X5F,
     MAG_OFFSET_Z_MSB_ADDR = 0X60,
 
-    /* Gyroscope Offset register s*/
+    /* Gyroscope Offset registers */
     GYRO_OFFSET_X_LSB_ADDR = 0X61,
     GYRO_OFFSET_X_MSB_ADDR = 0X62,
     GYRO_OFFSET_Y_LSB_ADDR = 0X63,
@@ -217,7 +217,7 @@ public:
     MAG_RADIUS_LSB_ADDR = 0X69,
     MAG_RADIUS_MSB_ADDR = 0X6A,
       
-    /* Accelerometer Config Register */
+    /* Accelerometer config register */
     ACC_CONFIG = 0x08
       
   } adafruit_bno055_reg_t;
@@ -323,7 +323,7 @@ public:
   void enterSuspendMode();
   void enterNormalMode();
   
-  /* Enabled 16G Mode */
+  /* Accelerometer config functions */
   void setAccelConfig16G();
 
 private:
