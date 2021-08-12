@@ -45,12 +45,6 @@
  */
 Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
                                  TwoWire *theWire) {
-#if defined(ARDUINO_SAMD_ZERO) && (_address == BNO055_ADDRESS_A)
-#error                                                                         \
-    "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete this line."
-  _address = BNO055_ADDRESS_B;
-#endif
-
 // BNO055 clock stretches for 500us or more!
 #ifdef ESP8266
   theWire->setClockStretchLimit(1000); // Allow for 1000us of clock stretching
