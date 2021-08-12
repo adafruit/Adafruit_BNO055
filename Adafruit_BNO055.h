@@ -23,9 +23,9 @@
 #define __ADAFRUIT_BNO055_H__
 
 #include "Arduino.h"
-#include <Wire.h>
 
 #include "utility/imumaths.h"
+#include <Adafruit_I2CDevice.h>
 #include <Adafruit_Sensor.h>
 
 /** BNO055 Address A **/
@@ -319,8 +319,7 @@ private:
   bool readLen(adafruit_bno055_reg_t, byte *buffer, uint8_t len);
   bool write8(adafruit_bno055_reg_t, byte value);
 
-  uint8_t _address;
-  TwoWire *_wire;
+  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
 
   int32_t _sensorID;
   adafruit_bno055_opmode_t _mode;
