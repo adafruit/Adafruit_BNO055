@@ -542,7 +542,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event,
     event->acceleration.y = vec.y();
     event->acceleration.z = vec.z();
   } else if (vec_type == Adafruit_BNO055::VECTOR_GRAVITY) {
-    event->type = SENSOR_TYPE_ACCELEROMETER;
+    event->type = SENSOR_TYPE_GRAVITY;
     vec = getVector(Adafruit_BNO055::VECTOR_GRAVITY);
 
     event->acceleration.x = vec.x();
@@ -556,12 +556,12 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event,
     event->orientation.y = vec.y();
     event->orientation.z = vec.z();
   } else if (vec_type == Adafruit_BNO055::VECTOR_GYROSCOPE) {
-    event->type = SENSOR_TYPE_ROTATION_VECTOR;
+    event->type = SENSOR_TYPE_GYROSCOPE;
     vec = getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
-    event->gyro.x = vec.x();
-    event->gyro.y = vec.y();
-    event->gyro.z = vec.z();
+    event->gyro.x = vec.x() * SENSORS_DPS_TO_RADS;
+    event->gyro.y = vec.y() * SENSORS_DPS_TO_RADS;
+    event->gyro.z = vec.z() * SENSORS_DPS_TO_RADS;
   } else if (vec_type == Adafruit_BNO055::VECTOR_MAGNETOMETER) {
     event->type = SENSOR_TYPE_MAGNETIC_FIELD;
     vec = getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);

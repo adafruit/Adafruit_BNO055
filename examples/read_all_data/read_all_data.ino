@@ -127,6 +127,12 @@ void printEvent(sensors_event_t* event) {
     y = event->acceleration.y;
     z = event->acceleration.z;
   }
+  else if (event->type == SENSOR_TYPE_GRAVITY) {
+    Serial.print("Gravity:");
+    x = event->acceleration.x;
+    y = event->acceleration.y;
+    z = event->acceleration.z;
+  }
   else {
     Serial.print("Unk:");
   }
