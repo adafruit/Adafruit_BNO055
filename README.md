@@ -15,7 +15,7 @@ The Adafruit Unified Sensor Library ([Adafruit_Sensor](https://github.com/adafru
 
 It provides a simple abstraction layer between your application and the actual sensor HW, allowing you to drop in any comparable sensor with only one or two lines of code to change in your project (essentially the constructor since the functions to read sensor data and get information about the sensor are defined in the base Adafruit_Sensor class).
 
-This is imporant useful for two reasons:
+This is important and useful for two reasons:
 
 1.) You can use the data right away because it's already converted to SI units that you understand and can compare, rather than meaningless values like 0..1023.
 
