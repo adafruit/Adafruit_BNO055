@@ -160,7 +160,8 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
 
 /*!
  *  @brief  Gets the current operating mode of the chip
- *  @return  operating_mode in integer which can be mapped in Section 3.3 e.g.Return 12 (0X0C) => NDOF
+ *  @return  operating_mode in integer which can be mapped in Section 3.3
+ *           for example: a return of 12 (0X0C) => NDOF
  */
 uint8_t Adafruit_BNO055::getMode() {
    uint8_t operating_mode = read8(BNO055_OPR_MODE_ADDR);
