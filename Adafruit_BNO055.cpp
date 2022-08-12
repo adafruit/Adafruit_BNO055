@@ -163,8 +163,8 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
  *  @return  operating_mode in integer which can be mapped in Section 3.3
  *           for example: a return of 12 (0X0C) => NDOF
  */
-uint8_t Adafruit_BNO055::getMode() {
-  uint8_t operating_mode = read8(BNO055_OPR_MODE_ADDR);
+adafruit_bno055_opmode_t Adafruit_BNO055::getMode() {
+  adafruit_bno055_opmode_t operating_mode = read8(BNO055_OPR_MODE_ADDR);
   return operating_mode;
 }
 
