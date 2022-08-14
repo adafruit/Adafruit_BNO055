@@ -164,8 +164,7 @@ void Adafruit_BNO055::setMode(adafruit_bno055_opmode_t mode) {
  *           for example: a return of 12 (0X0C) => NDOF
  */
 adafruit_bno055_opmode_t Adafruit_BNO055::getMode() {
-  adafruit_bno055_opmode_t operating_mode = read8(BNO055_OPR_MODE_ADDR);
-  return operating_mode;
+  return (adafruit_bno055_opmode_t)read8(BNO055_OPR_MODE_ADDR);
 }
 
 /*!
