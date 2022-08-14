@@ -2,6 +2,7 @@ var searchData=
 [
   ['getcalibration',['getCalibration',['../class_adafruit___b_n_o055.html#a34cb7b7421d4d9597ccfc31470c2c3f7',1,'Adafruit_BNO055']]],
   ['getevent',['getEvent',['../class_adafruit___b_n_o055.html#a8c91811617bd61d7c130ae8b79dd58ee',1,'Adafruit_BNO055::getEvent(sensors_event_t *)'],['../class_adafruit___b_n_o055.html#a33f7a219f8f5ed55e286d93821854d21',1,'Adafruit_BNO055::getEvent(sensors_event_t *, adafruit_vector_type_t)']]],
+  ['getmode',['getMode',['../class_adafruit___b_n_o055.html#af8a4cfaf81fcda5f16c274017ed2350d',1,'Adafruit_BNO055']]],
   ['getquat',['getQuat',['../class_adafruit___b_n_o055.html#afe84dad4e5dfb61d6c2a5fa5daa97147',1,'Adafruit_BNO055']]],
   ['getrevinfo',['getRevInfo',['../class_adafruit___b_n_o055.html#ab0754eee135fdd3f952d9d2df3dfbf7a',1,'Adafruit_BNO055']]],
   ['getsensor',['getSensor',['../class_adafruit___b_n_o055.html#a1a0849285f6cebde09b4812d9683010c',1,'Adafruit_BNO055']]],
