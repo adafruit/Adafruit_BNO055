@@ -57,6 +57,23 @@ typedef struct {
   int16_t mag_radius; /**< magnetometer radius */
 } adafruit_bno055_offsets_t;
 
+/** Operation mode settings **/
+typedef enum {
+  OPERATION_MODE_CONFIG = 0X00,
+  OPERATION_MODE_ACCONLY = 0X01,
+  OPERATION_MODE_MAGONLY = 0X02,
+  OPERATION_MODE_GYRONLY = 0X03,
+  OPERATION_MODE_ACCMAG = 0X04,
+  OPERATION_MODE_ACCGYRO = 0X05,
+  OPERATION_MODE_MAGGYRO = 0X06,
+  OPERATION_MODE_AMG = 0X07,
+  OPERATION_MODE_IMUPLUS = 0X08,
+  OPERATION_MODE_COMPASS = 0X09,
+  OPERATION_MODE_M4G = 0X0A,
+  OPERATION_MODE_NDOF_FMC_OFF = 0X0B,
+  OPERATION_MODE_NDOF = 0X0C
+} adafruit_bno055_opmode_t;
+
 /*!
  *  @brief  Class that stores state and functions for interacting with
  *          BNO055 Sensor
@@ -219,23 +236,6 @@ public:
     POWER_MODE_SUSPEND = 0X02
   } adafruit_bno055_powermode_t;
 
-  /** Operation mode settings **/
-  typedef enum {
-    OPERATION_MODE_CONFIG = 0X00,
-    OPERATION_MODE_ACCONLY = 0X01,
-    OPERATION_MODE_MAGONLY = 0X02,
-    OPERATION_MODE_GYRONLY = 0X03,
-    OPERATION_MODE_ACCMAG = 0X04,
-    OPERATION_MODE_ACCGYRO = 0X05,
-    OPERATION_MODE_MAGGYRO = 0X06,
-    OPERATION_MODE_AMG = 0X07,
-    OPERATION_MODE_IMUPLUS = 0X08,
-    OPERATION_MODE_COMPASS = 0X09,
-    OPERATION_MODE_M4G = 0X0A,
-    OPERATION_MODE_NDOF_FMC_OFF = 0X0B,
-    OPERATION_MODE_NDOF = 0X0C
-  } adafruit_bno055_opmode_t;
-
   /** Remap settings **/
   typedef enum {
     REMAP_CONFIG_P0 = 0x21,
@@ -284,6 +284,7 @@ public:
 
   bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
   void setMode(adafruit_bno055_opmode_t mode);
+  adafruit_bno055_opmode_t getMode();
   void setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
   void setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
   void getRevInfo(adafruit_bno055_rev_info_t *);
