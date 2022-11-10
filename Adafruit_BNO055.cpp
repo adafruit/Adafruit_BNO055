@@ -74,6 +74,12 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
  *  @return true if process is successful
  */
 bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
+  i2c_dev->begin(false);
+
+#if defined(TARGET_RP2040)
+  // philhower core seems to work with this speed?
+  i2c_dev->setSpeed(50000);
+#endif
 
   if (!i2c_dev->begin()) {
     return false;
