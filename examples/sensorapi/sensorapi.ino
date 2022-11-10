@@ -121,6 +121,8 @@ void displayCalStatus(void)
 void setup(void)
 {
   Serial.begin(115200);
+  while (!Serial) delay(10);  // wait for serial port to open!
+
   Serial.println("Orientation Sensor Test"); Serial.println("");
 
   /* Initialise the sensor */
