@@ -82,8 +82,8 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   i2c_dev->setSpeed(50000);
 #endif
 
-  // can take 500 ms to boot!
-  int timeout = 500; // in ms
+  // can take 850 ms to boot!
+  int timeout = 850; // in ms
   while (timeout > 0) {
     if (i2c_dev->begin()) {
       break;
