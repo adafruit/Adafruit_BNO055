@@ -174,6 +174,6 @@ void loop(void)
   /* New line for the next sample */
   Serial.println("");
 
-  /* Wait the specified delay before requesting nex data */
+  /* Wait the specified delay before requesting next data */
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }
