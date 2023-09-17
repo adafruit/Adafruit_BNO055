@@ -432,9 +432,15 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
     break;
   case VECTOR_EULER:
     /* 1 degree = 16 LSB */
-    xyz[0] = ((double)x) / 16.0;
+    /* in this case, from the Euler data registers
+       we read heading then roll then pitch.
+       So our local variable x is heading
+       local y is roll, local z is pitch. pitch is typically
+       rotation about y axis, but with this sensor
+       in the default axis configuration, pitch is x rotation. */
+    xyz[0] = ((double)z) / 16.0;
     xyz[1] = ((double)y) / 16.0;
-    xyz[2] = ((double)z) / 16.0;
+    xyz[2] = ((double)x) / 16.0;
     break;
   case VECTOR_ACCELEROMETER:
     /* 1m/s^2 = 100 LSB */
