@@ -257,6 +257,35 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal) {
   delay(20);
 }
 
+
+
+/*!
+ *  @brief  Set the Accelerometer to report up to 16G
+ */
+void Adafruit_BNO055::setAccelConfig16G()
+{
+  adafruit_bno055_opmode_t modeback = _mode;
+    
+  setMode(OPERATION_MODE_CONFIG);
+  delay(250);
+    
+  write8(BNO055_PAGE_ID_ADDR, 1);
+  delay(500);
+    
+  uint8_t acc_config_16G = (uint8_t)((BNO055_ACC_PWRMODE_NORMAL << 5)
+                                   | (BNO055_ACC_BW_125_HZ      << 2)
+                                   |  BNO055_ACC_CONFIG_16G);
+  // Configure the accelerometer to report up to 16G of acceleration
+  write8(ACC_CONFIG, acc_config_16G);
+  delay(500);
+        
+  write8(BNO055_PAGE_ID_ADDR, 0);
+    
+  setMode(modeback);
+  delay(20);
+}
+
+
 /*!
  *   @brief  Gets the latest system status info
  *   @param  system_status
