@@ -235,6 +235,70 @@ void Adafruit_BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
 }
 
 /*!
+ * @brief Configure the axis of the device to a new reference axis
+ * @param x_axis
+ *        axis to remap x_axis to
+ * @param y_axis
+ *        axis to remap y_axis to
+ * @param z_axis
+ *        axis to remap z_axis to
+ * @return true if new axis configuration valid
+ */
+bool Adafruit_BNO055::configureAxisRemap(adafruit_bno055_remap_axis_t x_axis,
+                                         adafruit_bno055_remap_axis_t y_axis,
+                                         adafruit_bno055_remap_axis_t z_axis) {
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  byte write_val = 0;
+  write_val = write_val | x_axis;
+  write_val = write_val | (y_axis << 2);
+  write_val = write_val | (z_axis << 4);
+
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, write_val);
+  delay(10);
+
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+
+  return (read8(BNO055_AXIS_MAP_CONFIG_ADDR) == write_val);
+}
+
+/*!
+ * @brief Configure the signs of the device's reference axis
+ * @param x_sign
+ *        sign to set the x_axis to
+ * @param y_sign
+ *        sign to set the y_axis to
+ * @param z_sign
+ *        sign to set the z_axis to
+ * @return true if sign configuration is valid
+ */
+bool Adafruit_BNO055::configureAxisSign(adafruit_bno055_remap_sign_t x_sign,
+                                        adafruit_bno055_remap_sign_t y_sign,
+                                        adafruit_bno055_remap_sign_t z_sign) {
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  byte write_val = 0;
+  write_val = write_val | z_sign;
+  write_val = write_val | (y_sign << 1);
+  write_val = write_val | (x_sign << 2);
+
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+  write8(BNO055_AXIS_MAP_SIGN_ADDR, write_val);
+  delay(10);
+
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+
+  return (read8(BNO055_AXIS_MAP_SIGN_ADDR) == write_val);
+}
+
+/*!
  *  @brief  Use the external 32.768KHz crystal
  *  @param  usextal
  *          use external crystal boolean
